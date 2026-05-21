@@ -3,777 +3,1786 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOE Well Configuration Dashboard</title>
+<title>EGS Surrogate Model</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+  --bg:#fff;--bg2:#f5f6f8;--bg3:#eef0f4;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.18);
+  --blue:#185FA5;--blue-bg:#e6f1fb;--blue-t:#0c447c;
+  --green:#2d7a2d;--green-bg:#eaf5ea;--green-t:#1a4d1a;
+  --amber-bg:#fef3dc;--amber:#7a4f00;
+  --red:#a32d2d;--red-bg:#fdeaea;
+  --r:8px;--rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg2);color:var(--text);font-size:15px}
 
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f4;
-    --bg-tertiary: #e8e8e5;
-    --text-primary: #1a1a18;
-    --text-secondary: #6b6b66;
-    --text-muted: #9a9a94;
-    --border: rgba(0,0,0,0.10);
-    --border-strong: rgba(0,0,0,0.18);
-    --accent: #1a1a18;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-  }
+/* HEADER */
+.hdr{background:var(--bg);border-bottom:.5px solid var(--border2);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hdr h1{font-size:15px;font-weight:600}
+.hdr p{font-size:10px;color:var(--text3);margin-top:1px}
+.pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pill-blue{background:var(--blue-bg);color:var(--blue-t)}
+.pill-green{background:var(--green-bg);color:var(--green-t)}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #18181b;
-      --bg-secondary: #222226;
-      --bg-tertiary: #2c2c32;
-      --text-primary: #f0efe8;
-      --text-secondary: #9a9a94;
-      --text-muted: #6b6b66;
-      --border: rgba(255,255,255,0.10);
-      --border-strong: rgba(255,255,255,0.18);
-      --accent: #f0efe8;
-    }
-  }
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 46px);overflow:hidden}
+.side{background:var(--bg);border-right:.5px solid var(--border2);overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:780px}
 
-  body {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.5;
-  }
+/* PANELS */
+.panel{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:10px 12px}
+.ptitle{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
 
-  /* ── Header ── */
-  header {
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border);
-    padding: 18px 32px;
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  header h1 {
-    font-size: 17px;
-    font-weight: normal;
-    letter-spacing: 0.02em;
-    color: var(--text-primary);
-  }
-  header .subtitle {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-    letter-spacing: 0.04em;
-  }
-  .header-meta {
-    margin-left: auto;
-    display: flex;
-    gap: 16px;
-  }
-  .meta-badge {
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-secondary);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 3px 9px;
-  }
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg2);border-radius:var(--r);padding:2px}
+.tab{flex:1;text-align:center;padding:4px 4px;font-size:11px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
+.tab.act{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tc{display:none}.tc.act{display:block}
 
-  /* ── Layout ── */
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px 24px 48px;
-  }
+/* METRIC CARDS */
+.mrow{display:grid;gap:6px;margin-bottom:10px}
+.mc{background:var(--bg2);border-radius:var(--r);padding:9px 11px}
+.mc .ml{font-size:12px;color:var(--text3);margin-bottom:2px}
+.mc .mv{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.mc .mu{font-size:12px;color:var(--text3);margin-top:2px}
 
-  /* ── Tabs ── */
-  .tab-bar {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 20px;
-    overflow-x: auto;
-  }
-  .tab {
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 0.04em;
-    padding: 9px 18px;
-    cursor: pointer;
-    color: var(--text-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    white-space: nowrap;
-    transition: color 0.15s;
-    text-transform: uppercase;
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-  }
-  .tab:hover { color: var(--text-secondary); }
-  .tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead th{font-weight:600;color:var(--text2);font-size:13px;text-align:left;padding:6px 7px;border-bottom:1px solid var(--border2);background:var(--bg2);position:sticky;top:0;z-index:2;white-space:nowrap}
+tbody td{padding:6px 8px;font-size:13px;border-bottom:.5px solid var(--border)}
+tbody tr:hover td{background:var(--bg2)}
+tbody tr.best td{background:var(--green-bg);color:var(--green-t);font-weight:600}
+tbody tr.worst td{background:var(--red-bg);color:var(--red)}
 
-  /* ── Controls ── */
-  .controls {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding: 12px 14px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-  }
-  .ctrl-group { display: flex; flex-direction: column; gap: 5px; }
-  .ctrl-label {
-    font-size: 9px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .filter-group { display: flex; gap: 4px; flex-wrap: wrap; }
-  .pill {
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-    background: var(--bg-primary);
-    color: var(--text-secondary);
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .pill:hover { border-color: var(--text-muted); color: var(--text-primary); }
-  .pill.active { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
+/* SLIDERS */
+.srow{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:6px;margin-bottom:7px}
+.srow label{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;min-width:0}
+.srow .sv{font-size:13px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
 
-  /* ── Chart ── */
-  .chart-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .chart-wrap { position: relative; width: 100%; height: 320px; }
-  .x-label {
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 8px;
-    letter-spacing: 0.04em;
-  }
+/* PREDICT BOX */
+.pout{background:var(--blue-bg);border-radius:var(--r);padding:10px;text-align:center;margin-top:6px}
+.pout .pv{font-size:28px;font-weight:700;color:var(--blue-t);line-height:1}
+.pout .pu{font-size:12px;color:var(--blue-t);opacity:.8;margin-top:3px}
 
-  /* ── Legend ── */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-  .leg-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 3px 7px;
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    transition: all 0.12s;
-    user-select: none;
-  }
-  .leg-item:hover { background: var(--bg-secondary); border-color: var(--border); }
-  .leg-item.hidden-sc { opacity: 0.28; }
-  .leg-dot { width: 20px; height: 2px; border-radius: 2px; flex-shrink: 0; }
+/* BARS */
+.bar-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
 
-  /* ── Table ── */
-  .table-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; min-width: 700px; }
-  th {
-    font-weight: normal;
-    font-size: 10px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-muted);
-    text-align: left;
-    padding: 9px 10px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: var(--bg-secondary);
-  }
-  td {
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    white-space: nowrap;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--bg-secondary); }
-  td.hi { color: #1a6e3a; font-weight: bold; }
-  td.lo { color: var(--text-muted); }
-
-  /* ── Compare stats ── */
-  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-  .scard {
-    flex: 1;
-    min-width: 100px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 10px 14px;
-  }
-  .scard .slabel {
-    font-size: 9px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 3px;
-  }
-  .scard .sval { font-size: 16px; font-family: 'Courier New', monospace; }
-  .scard .ssub { font-size: 10px; font-family: 'Courier New', monospace; color: var(--text-muted); margin-top: 1px; }
-
-  /* ── DOE Info panel ── */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .info-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-  }
-  .info-card .ilabel { font-size: 10px; font-family: 'Courier New', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-  .info-card .ilevels { display: flex; gap: 5px; flex-wrap: wrap; }
-  .level-pill {
-    font-size: 10px;
-    font-family: 'Courier New', monospace;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-  .level-lo { background: #e8f1fb; color: #1a4a7a; border-color: #b5d0f0; }
-  .level-mid { background: #e8f3e8; color: #1a5a2a; border-color: #a8d8a8; }
-  .level-hi { background: #fbeae7; color: #7a2a1a; border-color: #f0b8a8; }
-  @media (prefers-color-scheme: dark) {
-    .level-lo { background: #1a2a3a; color: #8ab8e8; border-color: #2a4a6a; }
-    .level-mid { background: #1a2a1a; color: #8ac88a; border-color: #2a4a2a; }
-    .level-hi { background: #2a1a1a; color: #e88a7a; border-color: #4a2a2a; }
-  }
+/* MISC */
+select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text)}
+.btn{padding:6px 12px;font-size:11px;font-weight:500;border-radius:var(--r);border:.5px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer}
+.btn-pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.eq{background:var(--bg2);border-radius:var(--r);padding:9px 11px;font-family:'Courier New',monospace;font-size:10.5px;line-height:1.8;border-left:3px solid var(--blue);overflow-x:auto;white-space:pre-wrap}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:1px 5px;border-radius:8px}
+.b-blue{background:var(--blue-bg);color:var(--blue-t)}
+.b-green{background:var(--green-bg);color:var(--green-t)}
+.b-amber{background:var(--amber-bg);color:var(--amber)}
+.cw{position:relative;width:100%;max-width:680px}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--text3);align-items:center}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>DOE Well Configuration Dashboard</h1>
-  <span class="subtitle">CMG Reservoir · J-K Plane · Box-Behnken Design</span>
-  <div class="header-meta">
-    <span class="meta-badge">9 scenarios</span>
-    <span class="meta-badge">4 factors</span>
-    <span class="meta-badge">30-year horizon</span>
+<div class="hdr">
+  <div><h1>EGS Box-Behnken Surrogate Model</h1><p>25 simulation runs · 8 time horizons (0–30 yr) · Live well diagram · Decline curve</p></div>
+  <span class="pill pill-blue">Box-Behnken</span>
+  <span class="pill pill-green">Simulation Data Loaded</span>
+</div>
+
+<div class="layout">
+
+<!-- ===== SIDEBAR ===== -->
+<div class="side">
+
+  <!-- Horizon selector -->
+  <div class="panel">
+    <div class="ptitle">Production horizon (years) — 0 = first month</div>
+    <div class="tabs" id="hor-tabs">
+      <button class="tab act" onclick="setHorizon(0,this)">0</button>
+      <button class="tab" onclick="setHorizon(1,this)">1</button>
+      <button class="tab" onclick="setHorizon(5,this)">5</button>
+      <button class="tab" onclick="setHorizon(10,this)">10</button>
+      <button class="tab" onclick="setHorizon(15,this)">15</button>
+      <button class="tab" onclick="setHorizon(20,this)">20</button>
+      <button class="tab" onclick="setHorizon(25,this)">25</button>
+      <button class="tab" onclick="setHorizon(30,this)">30</button>
+    </div>
   </div>
-</header>
 
-<div class="container">
-
-  <!-- DOE factor overview -->
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="ilabel">Distance (ft)</div>
-      <div class="ilevels">
-        <span class="level-pill level-lo">300 (−)</span>
-        <span class="level-pill level-mid">450 (0)</span>
-        <span class="level-pill level-hi">600 (+)</span>
+  <!-- Sliders -->
+  <div class="panel">
+    <div class="ptitle">Well configuration</div>
+    <div class="srow">
+      <label>Distance (ft)</label>
+      <input type="range" id="sl-dist" min="300" max="600" step="1" value="450" oninput="sliderChanged()">
+      <span class="sv" id="lbl-dist">450 ft</span>
+    </div>
+    <div class="srow">
+      <label>Angle (°)</label>
+      <input type="range" id="sl-angle" min="60" max="180" step="1" value="120" oninput="sliderChanged()">
+      <span class="sv" id="lbl-angle">120°</span>
+    </div>
+    <div class="srow">
+      <label>Spacing (ft)</label>
+      <input type="range" id="sl-spac" min="30" max="150" step="1" value="90" oninput="sliderChanged()">
+      <span class="sv" id="lbl-spac">90 ft</span>
+    </div>
+    <div class="srow">
+      <label>Flow / fracture (bbl/d)</label>
+      <input type="range" id="sl-flow" min="1100" max="1600" step="1" value="1350" oninput="sliderChanged()">
+      <span class="sv" id="lbl-flow">1350</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:var(--blue-bg);border-radius:6px">
+      <span style="font-size:11px;color:var(--blue-t);font-weight:600">No. of fractures  ⌈3160 / spacing⌉</span>
+      <span style="font-size:13px;font-weight:700;color:var(--blue-t)" id="lbl-nfracs">36</span>
+    </div>
+    <div style="background:var(--green-bg);border-radius:6px;padding:7px 9px;margin-bottom:7px">
+      <div style="font-size:11px;color:var(--green-t);font-weight:700;margin-bottom:5px">Total flow rate</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px">
+        <div style="font-size:10px;color:var(--green-t);opacity:.8">bbl/day</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-bbld">48,600</div>
+        <div style="font-size:10px;color:var(--green-t);opacity:.8">bbl/min</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-bblmin">33.75</div>
+        <div style="font-size:10px;color:var(--green-t);opacity:.8">l/s</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-ls">89.4</div>
+        <div style="font-size:10px;color:var(--green-t);opacity:.8">gal/min</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-galmin">8,925</div>
       </div>
     </div>
-    <div class="info-card">
-      <div class="ilabel">Angle (deg)</div>
-      <div class="ilevels">
-        <span class="level-pill level-lo">60° (−)</span>
-        <span class="level-pill level-mid">120° (0)</span>
-        <span class="level-pill level-hi">180° (+)</span>
+    <div class="pout">
+      <div class="pv" id="pred-val">—</div>
+      <div class="pu" id="pred-unit">Predicted temperature</div>
+    </div>
+  </div>
+
+  <!-- Well diagram (compact) -->
+  <div class="panel">
+    <div class="ptitle">Well geometry</div>
+    <svg id="well-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block"></svg>
+    <div id="cfg-label" style="font-size:9.5px;color:var(--text3);text-align:center;margin-top:4px;line-height:1.5"></div>
+  </div>
+
+
+
+</div><!-- /side -->
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- Main tab bar -->
+  <div class="tabs" style="background:var(--bg);border:.5px solid var(--border);flex-wrap:wrap" id="main-tabs">
+    <button class="tab act" onclick="setMainTab('predict',this)">Temperature profile prediction</button>
+    <button class="tab" onclick="setMainTab('energy',this)">⚡ Energy</button>
+    <button class="tab" onclick="setMainTab('decline',this)">All decline curves</button>
+    <button class="tab" onclick="setMainTab('sensitivity',this)">Sensitivity</button>
+    <button class="tab" onclick="setMainTab('rsm',this)">Response surface</button>
+    <button class="tab" onclick="setMainTab('data',this)">Simulation data</button>
+  </div>
+
+  <!-- DATA TAB -->
+  <div id="tab-data" class="tc">
+    <div class="panel">
+      <div class="ptitle">25-run Box-Behnken design — Numerical Simulation produced temperature (°C)</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Case</th><th>Dist</th><th>Ang</th><th>Spac</th><th>Flow</th><th>nF</th><th>Total Q (bbl/d)</th><th>x₁</th><th>x₂</th><th>x₃</th><th>x₄</th><th>0yr</th><th>1yr</th><th>5yr</th><th>10yr</th><th>15yr</th><th>20yr</th><th>25yr</th><th>30yr</th></tr></thead>
+          <tbody id="data-body"></tbody>
+        </table>
       </div>
     </div>
-    <div class="info-card">
-      <div class="ilabel">Fracture Spacing (ft)</div>
-      <div class="ilevels">
-        <span class="level-pill level-lo">30 (−)</span>
-        <span class="level-pill level-mid">90 (0)</span>
-        <span class="level-pill level-hi">150 (+)</span>
+  </div>
+
+  <!-- ALL DECLINE CURVES TAB -->
+  <div id="tab-decline" class="tc">
+    <div class="panel">
+      <div class="ptitle">Temperature decline curves — all 25 Numerical Simulation scenarios</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <label style="font-size:11px;color:var(--text2)">Highlight scenario:
+          <select id="hl-sel" onchange="renderAllDecline()" style="margin-left:4px"><option value="0">None</option></select>
+        </label>
+        <label style="font-size:11px;color:var(--text2)">Color by:
+          <select id="color-by" onchange="renderAllDecline()" style="margin-left:4px">
+            <option value="spac">Fracture spacing</option>
+            <option value="flow">Flow rate</option>
+            <option value="dist">Distance</option>
+            <option value="angle">Angle</option>
+          </select>
+        </label>
+      </div>
+      <div class="cw" style="height:320px">
+        <canvas id="chart-decline"></canvas>
+      </div>
+      <div class="leg" id="leg-decline"></div>
+    </div>
+  </div>
+
+  <!-- PREDICTION CURVE TAB -->
+  <div id="tab-predict" class="tc act">
+    <div class="panel">
+      <div class="ptitle">Surrogate-predicted decline curve vs. 3 nearest Numerical Simulation scenarios</div>
+      <div class="cw" style="height:320px">
+        <canvas id="chart-pred"></canvas>
+      </div>
+      <div class="leg" id="leg-pred"></div>
+      <div id="pred-note" style="margin-top:8px;font-size:10.5px;color:var(--text3)"></div>
+    </div>
+    <div class="panel" style="margin-top:10px">
+      <div class="ptitle">Predicted temperature at all 7 horizons</div>
+      <div class="mrow" id="pred-all-metrics" style="grid-template-columns:repeat(8,1fr)"></div>
+    </div>
+  </div>
+
+  <!-- SENSITIVITY TAB -->
+  <div id="tab-sensitivity" class="tc">
+
+    <!-- Toggle S1 vs ST -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+      <div class="tabs" style="background:var(--bg);border:.5px solid var(--border)">
+        <button class="tab act" id="btn-s1" onclick="setSobolMode('S1',this)">First-order (S₁)</button>
+        <button class="tab"     id="btn-st" onclick="setSobolMode('ST',this)">Total-order (Sₜ)</button>
+      </div>
+      <span style="font-size:11px;color:var(--text3)">
+        <b>S₁</b> = direct effect only &nbsp;|&nbsp; <b>Sₜ</b> = direct + all interactions &nbsp;|&nbsp; N=100,000 Monte Carlo samples
+      </span>
+    </div>
+
+
+
+
+
+    <!-- Energy sensitivity -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Sensitivity of 30-year net electrical energy (GWhe) — N=50,000 Monte Carlo</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <div class="tabs" style="background:var(--bg);border:.5px solid var(--border);display:inline-flex">
+          <button class="tab" id="btn-e-s1" onclick="setEnergySobolMode('S1',this)">First-order (S₁)</button>
+          <button class="tab act" id="btn-e-st" onclick="setEnergySobolMode('ST',this)">Total-order (Sₜ)</button>
+        </div>
+        <div class="tabs" style="background:var(--bg);border:.5px solid var(--border);display:inline-flex">
+          <button class="tab act" id="btn-flow-frac" onclick="setFlowMode('frac',this)">Flow / fracture</button>
+          <button class="tab"     id="btn-flow-total" onclick="setFlowMode('total',this)">Total flow rate</button>
+        </div>
+        <span style="font-size:10px;color:var(--text3)">
+          Flow/frac: 1,100–1,600 bbl/d per fracture &nbsp;|&nbsp;
+          Total flow: nF × flow/frac (24,200–169,600 bbl/d)
+        </span>
+      </div>
+      <div id="energy-sobol-bars"></div>
+      <div style="margin-top:12px">
+        <div class="cw" style="height:340px"><canvas id="chart-energy-sobol"></canvas></div>
       </div>
     </div>
-    <div class="info-card">
-      <div class="ilabel">Flowrate (bbl/day/frac)</div>
-      <div class="ilevels">
-        <span class="level-pill level-lo">1100 (−)</span>
-        <span class="level-pill level-mid">1350 (0)</span>
-        <span class="level-pill level-hi">1600 (+)</span>
+
+    <!-- Tornado chart -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Tornado chart — one-at-a-time impact on 30yr net energy (GWhe)</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Each bar shows change from baseline (1,066 GWhe) when a single parameter moves from mid to its low/high value, all others fixed at mid.</div>
+      <div class="cw" style="height:320px"><canvas id="chart-tornado"></canvas></div>
+    </div>
+
+    <!-- Contour heatmap -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Spacing × Distance interaction — net energy heatmap (GWhe)</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Angle and flow held at mid-point. Color shows 30yr net electrical energy (GWhe). Reveals the coupled optimum.</div>
+      <div class="cw" style="height:320px"><canvas id="chart-contour"></canvas></div>
+      <div class="leg" id="leg-contour"></div>
+    </div>
+
+    <!-- Monte Carlo histogram -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Monte Carlo distribution — 30yr net energy across 20,000 random configurations</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px" id="mc-stats-row"></div>
+      <div class="cw" style="height:340px"><canvas id="chart-mc-hist"></canvas></div>
+    </div>
+
+    <!-- RSM coefficients (collapsed detail) -->
+
+    <div class="panel">
+      <div class="ptitle">RSM coefficient magnitudes — current horizon (reference)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-size:10px;color:var(--text3);margin-bottom:5px">Main + quadratic</div><div id="bars-main"></div><div id="bars-quad"></div></div>
+        <div><div style="font-size:10px;color:var(--text3);margin-bottom:5px">Two-factor interactions</div><div id="bars-int"></div></div>
       </div>
     </div>
+
   </div>
 
-  <!-- Tabs -->
-  <div class="tab-bar">
-    <button class="tab active" onclick="switchTab('temp',this)">Temperature</button>
-    <button class="tab" onclick="switchTab('flow',this)">Flowrate</button>
-    <button class="tab" onclick="switchTab('table',this)">Milestone Table</button>
-    <button class="tab" onclick="switchTab('compare',this)">Compare</button>
-  </div>
-
-  <!-- ===== TEMPERATURE TAB ===== -->
-  <div id="tab-temp">
-    <div class="controls">
-      <div class="ctrl-group"><span class="ctrl-label">Temp unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('tempUnit','F',this,'renderTemp')">°F</button>
-        <button class="pill" onclick="setU('tempUnit','C',this,'renderTemp')">°C</button>
-        <button class="pill" onclick="setU('tempUnit','K',this,'renderTemp')">K</button>
-      </div></div>
-      <div class="ctrl-group"><span class="ctrl-label">Filter angle</span><div class="filter-group" id="ang-t">
-        <button class="pill active" onclick="setF('angle','all',this,'renderTemp')">All</button>
-        <button class="pill" onclick="setF('angle',60,this,'renderTemp')">60°</button>
-        <button class="pill" onclick="setF('angle',120,this,'renderTemp')">120°</button>
-        <button class="pill" onclick="setF('angle',180,this,'renderTemp')">180°</button>
-      </div></div>
-      <div class="ctrl-group"><span class="ctrl-label">Filter dist</span><div class="filter-group" id="dist-t">
-        <button class="pill active" onclick="setF('dist','all',this,'renderTemp')">All</button>
-        <button class="pill" onclick="setF('dist',300,this,'renderTemp')">300 ft</button>
-        <button class="pill" onclick="setF('dist',450,this,'renderTemp')">450 ft</button>
-        <button class="pill" onclick="setF('dist',600,this,'renderTemp')">600 ft</button>
-      </div></div>
-    </div>
-    <div class="legend" id="leg-temp"></div>
-    <div class="chart-card">
-      <div class="chart-wrap"><canvas id="chartTemp" aria-label="Producer surface temperature over time"></canvas></div>
-      <div class="x-label">Time (years) — linear scale</div>
+  <!-- RSM TAB -->
+  <div id="tab-rsm" class="tc">
+    <div class="panel">
+      <div class="ptitle">Response surface — predicted temperature at selected horizon</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+        <label style="font-size:11px;color:var(--text2)">X axis: <select id="rsm-x" onchange="renderRSM()" style="margin-left:4px"><option value="0">Distance</option><option value="1">Angle</option><option value="2">Spacing</option><option value="3">Flow</option></select></label>
+        <label style="font-size:11px;color:var(--text2)">Y axis: <select id="rsm-y" onchange="renderRSM()" style="margin-left:4px"><option value="0">Distance</option><option value="1" selected>Angle</option><option value="2">Spacing</option><option value="3">Flow</option></select></label>
+        <span style="font-size:10px;color:var(--text3)">(other factors held at slider values)</span>
+      </div>
+      <div class="cw" style="height:320px"><canvas id="chart-rsm"></canvas></div>
+      <div class="leg" id="leg-rsm"></div>
     </div>
   </div>
 
-  <!-- ===== FLOWRATE TAB ===== -->
-  <div id="tab-flow" style="display:none">
-    <div class="controls">
-      <div class="ctrl-group"><span class="ctrl-label">Y axis</span><div class="filter-group">
-        <button class="pill active" onclick="setU('flowMode','per_frac',this,'renderFlow')">Per fracture</button>
-        <button class="pill" onclick="setU('flowMode','total',this,'renderFlow')">Total (2 producers)</button>
-      </div></div>
-      <div class="ctrl-group"><span class="ctrl-label">Flow unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('flowUnit','bbl_d',this,'renderFlow')">bbl/day</button>
-        <button class="pill" onclick="setU('flowUnit','bbl_min',this,'renderFlow')">bbl/min</button>
-        <button class="pill" onclick="setU('flowUnit','ls',this,'renderFlow')">L/s</button>
-        <button class="pill" onclick="setU('flowUnit','gal_min',this,'renderFlow')">gal/min</button>
-      </div></div>
-      <div class="ctrl-group"><span class="ctrl-label">Filter angle</span><div class="filter-group">
-        <button class="pill active" onclick="setF('angle','all',this,'renderFlow')">All</button>
-        <button class="pill" onclick="setF('angle',60,this,'renderFlow')">60°</button>
-        <button class="pill" onclick="setF('angle',120,this,'renderFlow')">120°</button>
-        <button class="pill" onclick="setF('angle',180,this,'renderFlow')">180°</button>
-      </div></div>
-    </div>
-    <div class="legend" id="leg-flow"></div>
-    <div class="chart-card">
-      <div class="chart-wrap"><canvas id="chartFlow" aria-label="Flowrate over time"></canvas></div>
-      <div class="x-label">Time (years) — linear scale</div>
-    </div>
-  </div>
+  <!-- ENERGY TAB -->
+  <div id="tab-energy" class="tc">
 
-  <!-- ===== MILESTONE TABLE TAB ===== -->
-  <div id="tab-table" style="display:none">
-    <div class="controls">
-      <div class="ctrl-group"><span class="ctrl-label">Show</span><div class="filter-group">
-        <button class="pill active" onclick="setU('tblMode','temp',this,'renderTable')">Temperature</button>
-        <button class="pill" onclick="setU('tblMode','flow',this,'renderTable')">Flowrate</button>
-      </div></div>
-      <div class="ctrl-group" id="tbl-tu"><span class="ctrl-label">Temp unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('tblTU','F',this,'renderTable')">°F</button>
-        <button class="pill" onclick="setU('tblTU','C',this,'renderTable')">°C</button>
-        <button class="pill" onclick="setU('tblTU','K',this,'renderTable')">K</button>
-      </div></div>
-      <div class="ctrl-group" id="tbl-fu" style="display:none"><span class="ctrl-label">Flow unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('tblFU','bbl_d',this,'renderTable')">bbl/day</button>
-        <button class="pill" onclick="setU('tblFU','bbl_min',this,'renderTable')">bbl/min</button>
-        <button class="pill" onclick="setU('tblFU','ls',this,'renderTable')">L/s</button>
-        <button class="pill" onclick="setU('tblFU','gal_min',this,'renderTable')">gal/min</button>
-      </div></div>
-    </div>
-    <div class="table-card">
-      <div class="table-wrap"><table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
-    </div>
-  </div>
+    <!-- Controls row -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Calculation parameters</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
 
-  <!-- ===== COMPARE TAB ===== -->
-  <div id="tab-compare" style="display:none">
-    <div class="controls">
-      <div class="ctrl-group"><span class="ctrl-label">Metric</span><div class="filter-group">
-        <button class="pill active" onclick="setU('cmpMetric','temp',this,'renderBar')">Temperature</button>
-        <button class="pill" onclick="setU('cmpMetric','flow',this,'renderBar')">Total flowrate</button>
-      </div></div>
-      <div class="ctrl-group" id="cmp-tu"><span class="ctrl-label">Temp unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('cmpTU','F',this,'renderBar')">°F</button>
-        <button class="pill" onclick="setU('cmpTU','C',this,'renderBar')">°C</button>
-        <button class="pill" onclick="setU('cmpTU','K',this,'renderBar')">K</button>
-      </div></div>
-      <div class="ctrl-group" id="cmp-fu" style="display:none"><span class="ctrl-label">Flow unit</span><div class="filter-group">
-        <button class="pill active" onclick="setU('cmpFU','bbl_d',this,'renderBar')">bbl/day</button>
-        <button class="pill" onclick="setU('cmpFU','bbl_min',this,'renderBar')">bbl/min</button>
-        <button class="pill" onclick="setU('cmpFU','ls',this,'renderBar')">L/s</button>
-        <button class="pill" onclick="setU('cmpFU','gal_min',this,'renderBar')">gal/min</button>
-      </div></div>
-      <div class="ctrl-group"><span class="ctrl-label">At time</span><div class="filter-group" id="ms-filter">
-        <button class="pill active" onclick="setMs(90,this)">90d</button>
-        <button class="pill" onclick="setMs(365,this)">1 yr</button>
-        <button class="pill" onclick="setMs(1095,this)">3 yr</button>
-        <button class="pill" onclick="setMs(1825,this)">5 yr</button>
-        <button class="pill" onclick="setMs(3650,this)">10 yr</button>
-        <button class="pill" onclick="setMs(7300,this)">20 yr</button>
-        <button class="pill" onclick="setMs(10950,this)">30 yr</button>
-      </div></div>
-    </div>
-    <div class="stat-row" id="stat-row"></div>
-    <div class="chart-card">
-      <div class="chart-wrap" style="height:260px"><canvas id="barChart" aria-label="Bar comparison of scenarios"></canvas></div>
-    </div>
-  </div>
+        <!-- Left: parasitic slider only, T_inj fixed -->
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--blue-bg);border-radius:var(--r);margin-bottom:10px">
+            <span style="font-size:11px;color:var(--blue-t);font-weight:600;min-width:160px">Injection temperature</span>
+            <span style="font-size:13px;font-weight:700;color:var(--blue-t)">165°F &nbsp;=&nbsp; 73.89°C &nbsp;<span style="font-size:10px;font-weight:400">(fixed)</span></span>
+          </div>
+          <div class="srow" style="margin-bottom:4px">
+            <label style="min-width:170px">Parasitic load override</label>
+            <input type="range" id="e-parasitic" min="20" max="40" step="0.1" value="20" oninput="updateEnergy()">
+            <span class="sv" id="e-parasitic-lbl" style="min-width:100px">Auto</span>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-left:0;line-height:1.6;margin-top:4px">
+            Slide right to override parasitic % for all scenarios.<br>
+            <b>Auto:</b> 20% at Q<sub>min</sub>=24,200 bbl/d → 40% at Q<sub>max</sub>=169,600 bbl/d (linear).
+          </div>
+          <div style="margin-top:10px">
+            <div class="srow" style="margin-bottom:4px">
+              <label style="min-width:170px">ORC efficiency (η)</label>
+              <input type="range" id="e-orc" min="8" max="16" step="0.1" value="12" oninput="updateEnergy()">
+              <span class="sv" id="e-orc-lbl" style="min-width:100px">12.0%</span>
+            </div>
+            <div style="font-size:10px;color:var(--text3);line-height:1.6;margin-top:4px">
+              Binary ORC cycle: converts net thermal → net electrical.<br>
+              Typical range: 8% (low temp) to 16% (high temp, optimised plant).<br>
+              P<sub>elec</sub> = Q̇<sub>net,thermal</sub> × η<sub>ORC</sub>
+            </div>
+          </div>
+        </div>
 
-</div><!-- /container -->
+        <!-- Right: formula box -->
+        <div style="background:var(--bg2);border-radius:var(--r);padding:9px 11px;font-size:10.5px;line-height:1.9;color:var(--text2)">
+          <b>Gross thermal power:</b><br>
+          &nbsp; Q̇<sub>gross</sub>(t) = ṁ × Cₚ × (T<sub>prod</sub> − T<sub>inj</sub>)<br>
+          <b>Parasitic load (pump work):</b><br>
+          &nbsp; f<sub>p</sub> = 20–40% (linear with Q<sub>total</sub>)<br>
+          &nbsp; Par<sub>MW</sub> = Q̇<sub>gross</sub>(t=0) × f<sub>p</sub> &nbsp;<b>(fixed for project life)</b><br>
+          <b>Gross electrical:</b><br>
+          &nbsp; P<sub>elec,gross</sub>(t) = Q̇<sub>gross</sub>(t) × η<sub>ORC</sub><br>
+          <b>Parasitic (fixed MWe at t=0):</b><br>
+          &nbsp; Par<sub>MWe</sub> = P<sub>elec,gross</sub>(t=0) × f<sub>p</sub><br>
+          <b>Net electrical:</b><br>
+          &nbsp; P<sub>elec,net</sub>(t) = max(0, P<sub>elec,gross</sub>(t) − Par<sub>MWe</sub>)<br>
+          <b>Cumulative electrical energy:</b><br>
+          &nbsp; E<sub>elec</sub> = ∫₀³⁰ P<sub>elec,net</sub> dt
+        </div>
+      </div>
+    </div>
+
+    <!-- Predictor energy output -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Predicted energy — current slider configuration</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px" id="e-pred-metrics"></div>
+      <div class="cw" style="height:320px">
+        <canvas id="chart-power-pred" role="img" aria-label="Predicted thermal power curve"></canvas>
+      </div>
+    </div>
+
+    <!-- All 25 scenarios energy table -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">All 25 scenarios — 30-year cumulative energy</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th><th>#</th><th>Case</th><th>Dist</th><th>Angle</th>
+              <th>Spac</th><th>Q/frac</th><th>nF</th><th>Q_total (bbl/d)</th>
+              <th>ṁ (kg/s)</th><th>Parasitic (MWe, fixed)</th>
+              <th>P_net avg (MWe)</th>
+              <th>E_net 30yr (GWhe)</th>
+            </tr>
+          </thead>
+          <tbody id="energy-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Power curves chart -->
+    <div class="panel" style="display:none">
+      <div class="ptitle">Net electrical power curves — all 25 scenarios (MWe)</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <label style="font-size:11px;color:var(--text2)">Highlight:
+          <select id="e-hl-sel" onchange="renderPowerCurves()" style="margin-left:4px">
+            <option value="0">None</option>
+          </select>
+        </label>
+        <label style="font-size:11px;color:var(--text2)">Color by:
+          <select id="e-color-by" onchange="renderPowerCurves()" style="margin-left:4px">
+            <option value="spac">Fracture spacing</option>
+            <option value="flow">Flow rate</option>
+            <option value="dist">Distance</option>
+            <option value="angle">Angle</option>
+          </select>
+        </label>
+      </div>
+      <div class="cw" style="height:320px">
+        <canvas id="chart-power-curves" role="img" aria-label="Thermal power decline curves for all 25 scenarios"></canvas>
+      </div>
+      <div class="leg" id="leg-power-curves"></div>
+    </div>
+
+  </div><!-- /tab-energy -->
+
+</div><!-- /main -->
+</div><!-- /layout -->
 
 <script>
-// ── Palette & style ────────────────────────────────────────────────────────
-const COLORS=['#534AB7','#0F6E56','#D85A30','#185FA5','#BA7517','#993556','#3B6D11','#993C1D','#0C447C'];
-const DASHES=[[],[5,4],[2,4],[8,3],[5,2,2,2],[],[5,4],[2,4],[8,3]];
-
-// ── DOE metadata ───────────────────────────────────────────────────────────
-const META={
-  "1":{dist:300,angle:60,spacing:90,q:1350,nfrac:36},
-  "2":{dist:300,angle:180,spacing:90,q:1350,nfrac:36},
-  "3":{dist:600,angle:60,spacing:90,q:1350,nfrac:36},
-  "4":{dist:600,angle:180,spacing:90,q:1350,nfrac:36},
-  "5":{dist:300,angle:120,spacing:30,q:1350,nfrac:106},
-  "10":{dist:300,angle:120,spacing:90,q:1600,nfrac:36},
-  "11":{dist:600,angle:120,spacing:90,q:1100,nfrac:36},
-  "12":{dist:600,angle:120,spacing:90,q:1600,nfrac:36},
-  "13":{dist:450,angle:60,spacing:30,q:1350,nfrac:106}
-};
-const SC_KEYS=Object.keys(META);
-
-// ── Temperature time-series (times in days) ────────────────────────────────
-const TDATA={
-"1":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,36.8,47.2,60,77.2,90,120,166.2,180,226.9,290.2,365,443.8,551.1,697.1,730,857.3,1041.1,1095,1265.2,1460,1563.5,1686.4,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[399.27,399.27,405.32,408.41,410.38,412.77,415.4,416.92,417.95,418.73,419.35,419.86,420.55,421.33,422.03,422.69,423.06,423.63,424.0,424.01,423.74,423.39,422.63,421.68,419.87,416.95,416.67,413.74,409.1,407.8,403.26,399.1,396.18,392.87,389.13,379.52,370.51,361.67,354.34,346.42,333.07,321.69,311.83,303.38,296.01,289.55,283.84,278.8,274.29,270.25]},
-"2":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,36.7,46.9,60,76.6,90,120,166.1,180,231.9,318.5,365,503.7,673.1,730,925.1,1095,1370.9,1460,1793.7,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[406.62,406.62,412.98,416.2,418.22,420.68,423.37,424.9,425.94,426.71,427.33,427.83,428.48,429.22,429.9,430.49,430.86,431.38,431.61,431.61,431.29,430.26,429.56,427.11,423.76,422.65,418.42,414.7,408.22,406.25,398.25,397.79,389.11,380.9,373.14,365.69,358.67,345.91,334.62,325.0,316.57,309.1,302.43,296.47,291.08,286.2,281.77]},
-"3":{times:[0.5,1,2,3,4,6,10,14,18,22,26,30,38.4,54.2,68.4,90,120,163.4,180,230.5,306,365,468,613.9,730,956.2,1095,1460,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[390.21,390.21,396.19,399.19,401.09,403.39,405.91,407.36,408.33,409.06,409.65,410.13,410.91,411.91,412.56,413.26,413.93,414.57,414.75,415.15,415.5,415.66,415.85,416.04,416.16,416.36,416.49,416.8,417.0,417.07,416.98,416.68,416.15,415.33,413.05,409.93,406.08,401.69,396.86,391.77,386.5,381.17,375.85,370.59]},
-"4":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,38.4,54.3,68.4,90,120,169.7,180,288,365,489,657.7,730,1050.8,1095,1460,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[406.44,406.44,412.93,416.19,418.22,420.68,423.34,424.88,425.92,426.69,427.3,427.81,428.62,429.65,430.3,431.0,431.67,432.33,432.43,432.98,433.13,433.23,433.27,433.27,433.27,433.27,433.22,433.08,432.83,432.44,431.89,431.17,430.26,427.76,424.53,420.69,416.36,411.66,406.7,401.6,396.41,391.24,386.1]},
-"5":{times:[0.7,1.5,3.5,6,11.3,19.3,27.3,39.8,55.6,78.2,90,120,171.2,240,331.1,365,470.2,665.2,996.8,1460,1782,2190,2858.6,3170.1,3650,4380,5110,5475,5840,6377.8,6935,7300,8395,8760,9490,10220,10950],
-temps:[425.9,427.99,431.51,433.21,434.79,435.92,436.58,437.2,437.67,438.12,438.29,438.61,438.92,439.07,438.67,438.27,435.7,427.87,409.66,374.18,352.46,330.64,304.36,295.03,283.29,269.48,258.99,254.62,250.65,245.48,240.81,238.0,230.89,228.84,225.17,221.97,219.15]},
-"10":{times:[0.7,1.4,3.4,6,10,17.2,25.3,36.9,55.7,79.9,90,131.5,202.7,283.5,391,546.3,802.2,1095,1266.3,1460,1705.4,1825,1941.5,2190,2485.7,2840.4,3063.8,3285,3523.3,3650,3757.5,3886],
-temps:[408.54,411.54,417.56,420.49,422.78,424.8,426.07,427.2,428.24,428.98,429.17,429.56,429.38,428.84,427.65,425.5,421.39,415.37,411.47,407.24,401.31,398.5,395.94,389.32,382.21,374.51,368.78,363.12,357.25,354.69,352.15,348.75]},
-"11":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,38.9,57,70.4,90,120,159.8,180,282.2,365,490.7,699.2,730,966.7,1095,1460,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[385.66,385.66,393.32,397.2,399.7,402.74,406.08,408.03,409.34,410.3,411.06,411.69,412.76,414.19,414.95,415.77,416.67,417.47,417.78,418.7,419.06,419.34,419.56,419.57,419.71,419.78,419.96,420.11,420.23,420.29,420.12,419.87,419.87,418.35,416.65,414.43,411.74,410.24,406.97,403.4,399.61,395.67,391.63]},
-"12":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,38,52.3,70.2,90,120,175.7,180,267.5,365,504.1,730,960.1,1095,1460,1825,2190,2555,2920,3285,3650,4380,5110,5840,6570,7300,8030,8760,9490,10220,10950],
-temps:[399.81,399.81,405.91,408.97,410.85,413.15,415.65,417.11,418.11,418.83,419.4,419.87,420.6,421.52,422.32,422.95,423.65,424.48,424.53,425.28,425.73,426.08,426.38,426.47,426.56,426.73,426.76,426.67,426.23,425.38,424.4,423.12,417.8,413.01,407.72,402.03,399.09,393.09,387.05,381.04,375.15,369.43]},
-"13":{times:[0.6,1,2,3,4,6,10,14,18,22,26,30,37.6,53,70.8,90,120,175.5,240,327.4,365,535.3,805,1214.7,1460,1792,2190,2731,3140.4,3650,4608.5,5347,5840,6449.2,7206.4,7626.9,8030,8760,9490,10220,10950],
-temps:[417.77,417.77,420.84,422.33,423.29,424.81,425.71,426.43,426.92,427.3,427.6,427.84,428.2,428.7,429.1,429.42,429.82,430.38,430.88,431.43,431.62,432.22,431.6,424.58,417.11,404.69,389.46,368.28,354.13,338.33,314.76,300.81,295.2,284.57,275.76,271.47,267.95,261.84,256.4,251.56,247.24]}
-};
-
-// ── Milestone tables ───────────────────────────────────────────────────────
-const T_TBL=[
-  {sc:1,t1:399.27,t30:419.86,t90:423.06,t365:422.63,t1095:407.8,t1825:389.13,t3650:346.42,t7300:296.01,t10950:270.25},
-  {sc:2,t1:406.62,t30:427.83,t90:430.86,t365:429.56,t1095:414.7,t1825:397.79,t3650:358.67,t7300:309.1,t10950:281.77},
-  {sc:3,t1:390.21,t30:410.13,t90:413.26,t365:415.66,t1095:416.49,t1825:417.0,t3650:415.33,t7300:396.86,t10950:370.59},
-  {sc:4,t1:406.44,t30:427.81,t90:431.0,t365:433.13,t1095:433.27,t1825:433.08,t3650:430.26,t7300:411.66,t10950:386.1},
-  {sc:5,t1:425.9,t30:436.74,t90:438.29,t365:438.27,t1095:403.19,t1825:350.02,t3650:283.29,t7300:238.0,t10950:219.15},
-  {sc:10,t1:408.54,t30:426.6,t90:429.17,t365:428.08,t1095:415.37,t1825:398.5,t3650:354.69,t7300:348.41,t10950:null},
-  {sc:11,t1:385.66,t30:411.69,t90:415.77,t365:419.06,t1095:419.78,t1825:420.11,t3650:419.87,t7300:410.24,t10950:391.63},
-  {sc:12,t1:399.81,t30:419.87,t90:422.95,t365:425.73,t1095:426.65,t1825:426.76,t3650:423.12,t7300:399.09,t10950:369.43},
-  {sc:13,t1:417.77,t30:427.84,t90:429.42,t365:431.62,t1095:427.44,t1825:404.33,t3650:338.33,t7300:null,t10950:247.24}
+// ============================================================
+//  DATA
+// ============================================================
+const DOE = [
+  {s:1, dist:300,angle:60, spac:90, flow:1350,nf:36,  c:'Case 1'},
+  {s:2, dist:300,angle:180,spac:90, flow:1350,nf:36,  c:'Case 7'},
+  {s:3, dist:600,angle:60, spac:90, flow:1350,nf:36,  c:'Case 3'},
+  {s:4, dist:600,angle:180,spac:90, flow:1350,nf:36,  c:'Case 9'},
+  {s:5, dist:300,angle:120,spac:30, flow:1350,nf:106, c:'Case 4'},
+  {s:6, dist:300,angle:120,spac:150,flow:1350,nf:22,  c:'Case 4'},
+  {s:7, dist:600,angle:120,spac:30, flow:1350,nf:106, c:'Case 6'},
+  {s:8, dist:600,angle:120,spac:150,flow:1350,nf:22,  c:'Case 6'},
+  {s:9, dist:300,angle:120,spac:90, flow:1100,nf:36,  c:'Case 4'},
+  {s:10,dist:300,angle:120,spac:90, flow:1600,nf:36,  c:'Case 4'},
+  {s:11,dist:600,angle:120,spac:90, flow:1100,nf:36,  c:'Case 6'},
+  {s:12,dist:600,angle:120,spac:90, flow:1600,nf:36,  c:'Case 6'},
+  {s:13,dist:450,angle:60, spac:30, flow:1350,nf:106, c:'Case 2'},
+  {s:14,dist:450,angle:60, spac:150,flow:1350,nf:22,  c:'Case 2'},
+  {s:15,dist:450,angle:180,spac:30, flow:1350,nf:106, c:'Case 8'},
+  {s:16,dist:450,angle:180,spac:150,flow:1350,nf:22,  c:'Case 8'},
+  {s:17,dist:450,angle:60, spac:90, flow:1100,nf:36,  c:'Case 2'},
+  {s:18,dist:450,angle:60, spac:90, flow:1600,nf:36,  c:'Case 2'},
+  {s:19,dist:450,angle:180,spac:90, flow:1100,nf:36,  c:'Case 8'},
+  {s:20,dist:450,angle:180,spac:90, flow:1600,nf:36,  c:'Case 8'},
+  {s:21,dist:450,angle:120,spac:30, flow:1100,nf:106, c:'Case 5'},
+  {s:22,dist:450,angle:120,spac:30, flow:1600,nf:106, c:'Case 5'},
+  {s:23,dist:450,angle:120,spac:150,flow:1100,nf:22,  c:'Case 5'},
+  {s:24,dist:450,angle:120,spac:150,flow:1600,nf:22,  c:'Case 5'},
+  {s:25,dist:450,angle:120,spac:90, flow:1350,nf:36,  c:'Case 5'},
 ];
 
-// ── State ──────────────────────────────────────────────────────────────────
-const S={tempUnit:'F',flowUnit:'bbl_d',flowMode:'per_frac',tblMode:'temp',tblTU:'F',tblFU:'bbl_d',cmpMetric:'temp',cmpTU:'F',cmpFU:'bbl_d'};
-let filters={angle:'all',dist:'all'};
-let hidden=new Set();
-let currentMs=90;
-let CHARTS={};
+// Temperature at 7 horizons [1,5,10,15,20,25,30] years, in °C
+const TEMPS = {
+   1: [215.5,217.0,198.4,174.7,158.1,146.7,138.5,132.4],
+   2: [219.9,220.9,203.2,181.5,165.4,153.9,145.4,138.8],
+   3: [210.1,213.1,213.9,213.0,208.9,202.7,195.5,188.1],
+   4: [219.9,222.9,222.8,221.3,217.0,210.9,203.9,196.7],
+   5: [224.9,225.7,176.7,139.6,123.7,114.4,108.3,104.0],
+   6: [209.0,213.5,208.8,199.3,186.4,176.2,167.3,161.2],
+   7: [221.8,223.6,223.1,204.7,182.5,165.6,153.0,143.3],
+   8: [206.3,211.3,211.8,211.5,210.2,207.9,204.9,201.4],
+   9: [213.8,217.1,203.8,185.1,169.0,157.1,148.3,141.6],
+  10: [219.3,218.4,195.4,171.4,155.0,143.8,135.8,129.7],
+  11: [210.9,215.0,215.6,215.5,213.7,210.1,205.3,199.8],
+  12: [215.5,218.7,219.3,217.3,211.7,203.9,195.6,187.5],
+  13: [219.9,222.0,206.9,170.2,148.2,134.9,126.1,119.6],
+  14: [204.5,209.6,209.2,205.5,200.1,193.3,186.8,180.8],
+  15: [227.7,229.3,215.3,182.8,158.9,143.8,133.8,126.2],
+  16: [211.6,216.5,214.9,210.5,204.8,198.9,193.1,188.0],
+  17: [209.2,213.4,213.3,208.1,198.8,188.9,179.6,171.4],
+  18: [213.7,217.1,214.9,203.4,189.1,176.2,165.4,156.7],
+  19: [216.4,220.5,219.4,213.4,204.5,194.9,186.0,178.0],
+  20: [221.1,224.2,220.8,209.1,195.4,182.8,172.6,163.9],
+  21: [222.3,224.4,216.9,186.8,164.0,149.0,138.4,130.6],
+  22: [224.1,225.7,207.7,169.3,147.1,133.0,123.6,117.0],
+  23: [203.5,209.2,209.2,207.3,203.6,198.9,193.8,188.7],
+  24: [210.6,215.2,213.2,207.2,199.9,192.3,185.6,178.9],
+  25: [215.0,218.7,217.4,209.4,198.3,187.1,177.1,168.6],
+};
 
-// ── Unit converters ────────────────────────────────────────────────────────
-const cvtT=(v,u)=>u==='C'?(v-32)*5/9:u==='K'?(v-32)*5/9+273.15:v;
-const cvtF=(v,u)=>u==='bbl_min'?v/1440:u==='ls'?v*0.00184013:u==='gal_min'?v*0.291667:v;
-const fmtT=(v)=>v.toFixed(1);
-const fmtF=(v,u)=>u==='bbl_min'?v.toFixed(3):u==='ls'?v.toFixed(2):u==='gal_min'?v.toFixed(1):v.toFixed(0);
-const lblT=u=>u==='C'?'°C':u==='K'?'K':'°F';
-const lblF=u=>u==='bbl_min'?'bbl/min':u==='ls'?'L/s':u==='gal_min'?'gal/min':'bbl/day';
+// Full Numerical Simulation time-series: [year, tempC]
+const TS = {
+   1: [[0.5,217.8],[1,217.0],[2,213.7],[3,208.8],[4,203.9],[5,198.4],[6,193.1],[7,188.1],[8,183.2],[9,179.1],[10,174.7],[12,167.3],[15,158.1],[20,146.7],[25,138.5],[30,132.4]],
+   2: [[0.5,222.0],[1,220.9],[2,217.0],[3,212.6],[4,207.9],[5,203.2],[6,198.4],[7,193.8],[8,189.5],[9,185.4],[10,181.5],[12,174.4],[15,165.4],[20,153.9],[25,145.4],[30,138.8]],
+   3: [[0.5,212.7],[1,213.1],[2,213.4],[3,213.6],[4,213.8],[5,213.9],[6,213.9],[7,213.9],[8,213.7],[9,213.4],[10,213.0],[12,211.7],[15,208.9],[20,202.7],[25,195.5],[30,188.1]],
+   4: [[0.5,222.5],[1,222.9],[2,222.9],[3,222.9],[4,222.9],[5,222.8],[6,222.7],[7,222.5],[8,222.2],[9,221.8],[10,221.3],[12,219.9],[15,217.0],[20,210.9],[25,203.9],[30,196.7]],
+   5: [[0.5,226.1],[1,225.7],[2,218.1],[3,206.2],[4,190.1],[5,176.7],[6,165.9],[7,157.3],[8,150.2],[9,144.4],[10,139.6],[12,131.9],[15,123.7],[20,114.4],[25,108.3],[30,104.0]],
+   6: [[0.5,213.2],[1,213.5],[2,212.7],[3,211.6],[4,210.4],[5,208.8],[6,207.4],[7,205.7],[8,203.9],[9,201.7],[10,199.3],[12,194.0],[15,186.4],[20,176.2],[25,167.3],[30,161.2]],
+   7: [[0.5,223.1],[1,223.6],[2,224.2],[3,224.5],[4,224.3],[5,223.1],[6,220.9],[7,217.7],[8,213.8],[9,209.4],[10,204.7],[12,195.4],[15,182.5],[20,165.6],[25,153.0],[30,143.3]],
+   8: [[0.5,210.6],[1,211.3],[2,211.6],[3,211.7],[4,211.7],[5,211.8],[6,211.8],[7,211.8],[8,211.7],[9,211.6],[10,211.5],[12,211.1],[15,210.2],[20,207.9],[25,204.9],[30,201.4]],
+   9: [[0.5,217.1],[1,217.1],[2,214.7],[3,211.3],[4,207.6],[5,203.8],[6,199.6],[7,195.6],[8,191.5],[9,188.0],[10,185.1],[12,178.1],[15,169.0],[20,157.1],[25,148.3],[30,141.6]],
+  10: [[0.5,220.6],[1,218.4],[2,212.9],[3,207.2],[4,201.2],[5,195.4],[6,190.1],[7,184.8],[8,179.8],[9,175.3],[10,171.4],[12,164.0],[15,155.0],[20,143.8],[25,135.8],[30,129.7]],
+  11: [[0.5,214.3],[1,215.0],[2,215.3],[3,215.4],[4,215.5],[5,215.6],[6,215.7],[7,215.7],[8,215.7],[9,215.6],[10,215.5],[12,215.0],[15,213.7],[20,210.1],[25,205.3],[30,199.8]],
+  12: [[0.5,218.1],[1,218.7],[2,219.1],[3,219.2],[4,219.3],[5,219.3],[6,219.2],[7,218.9],[8,218.5],[9,218.0],[10,217.3],[12,215.5],[15,211.7],[20,203.9],[25,195.6],[30,187.5]],
+  13: [[0.5,221.4],[1,222.0],[2,222.2],[3,219.7],[4,214.0],[5,206.9],[6,198.6],[7,190.7],[8,183.1],[9,176.3],[10,170.2],[12,159.9],[15,148.2],[20,134.9],[25,126.1],[30,119.6]],
+  14: [[0.5,208.9],[1,209.6],[2,209.9],[3,209.8],[4,209.6],[5,209.2],[6,208.6],[7,208.0],[8,207.2],[9,206.4],[10,205.5],[12,203.5],[15,200.1],[20,193.3],[25,186.8],[30,180.8]],
+  15: [[0.5,229.0],[1,229.3],[2,229.1],[3,227.0],[4,222.2],[5,215.3],[6,208.9],[7,202.1],[8,195.7],[9,188.9],[10,182.8],[12,171.8],[15,158.9],[20,143.8],[25,133.8],[30,126.2]],
+  16: [[0.5,215.9],[1,216.5],[2,216.5],[3,216.1],[4,215.5],[5,214.9],[6,214.1],[7,213.2],[8,212.4],[9,211.3],[10,210.5],[12,208.2],[15,204.8],[20,198.9],[25,193.1],[30,188.0]],
+  17: [[0.5,212.6],[1,213.4],[2,213.7],[3,213.8],[4,213.6],[5,213.3],[6,212.7],[7,211.8],[8,210.7],[9,209.5],[10,208.1],[12,204.5],[15,198.8],[20,188.9],[25,179.6],[30,171.4]],
+  18: [[0.5,216.4],[1,217.1],[2,217.3],[3,216.9],[4,216.0],[5,214.9],[6,213.2],[7,211.1],[8,208.7],[9,206.1],[10,203.4],[12,197.7],[15,189.1],[20,176.2],[25,165.4],[30,156.7]],
+  19: [[0.5,219.8],[1,220.5],[2,220.6],[3,220.4],[4,220.0],[5,219.4],[6,218.7],[7,217.6],[8,216.4],[9,215.0],[10,213.4],[12,210.0],[15,204.5],[20,194.9],[25,186.0],[30,178.0]],
+  20: [[0.5,223.7],[1,224.2],[2,224.1],[3,223.5],[4,222.3],[5,220.8],[6,218.8],[7,216.7],[8,214.3],[9,211.8],[10,209.1],[12,203.5],[15,195.4],[20,182.8],[25,172.6],[30,163.9]],
+  21: [[0.5,223.9],[1,224.4],[2,224.8],[3,223.9],[4,221.2],[5,216.9],[6,211.2],[7,205.0],[8,198.6],[9,192.6],[10,186.8],[12,176.5],[15,164.0],[20,149.0],[25,138.4],[30,130.6]],
+  22: [[0.5,225.3],[1,225.7],[2,225.8],[3,222.8],[4,216.3],[5,207.7],[6,198.6],[7,190.3],[8,182.4],[9,175.3],[10,169.3],[12,159.2],[15,147.1],[20,133.0],[25,123.6],[30,117.0]],
+  23: [[0.5,208.5],[1,209.2],[2,209.5],[3,209.5],[4,209.3],[5,209.2],[6,208.9],[7,208.7],[8,208.4],[9,207.9],[10,207.3],[12,206.0],[15,203.6],[20,198.9],[25,193.8],[30,188.7]],
+  24: [[0.5,214.5],[1,215.2],[2,215.3],[3,214.8],[4,214.1],[5,213.2],[6,212.2],[7,211.1],[8,209.9],[9,208.6],[10,207.2],[12,204.4],[15,199.9],[20,192.3],[25,185.6],[30,178.9]],
+  25: [[0.5,218.0],[1,218.7],[2,219.0],[3,218.8],[4,218.3],[5,217.4],[6,216.3],[7,214.9],[8,213.2],[9,211.4],[10,209.4],[12,205.3],[15,198.3],[20,187.1],[25,177.1],[30,168.6]],
+};
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-function vis(){
-  return SC_KEYS.filter(k=>{
-    const m=META[k];
-    if(filters.angle!=='all'&&m.angle!=filters.angle)return false;
-    if(filters.dist!=='all'&&m.dist!=filters.dist)return false;
-    return true;
-  });
+const HORIZONS = [0,1,5,10,15,20,25,30];
+
+// Physical constants (used by energy calculations)
+const BBL_TO_M3   = 0.158987;   // 1 bbl = 0.158987 m³
+const CP_WATER    = 4186.0;     // J/kg·°C
+const RHO_WATER   = 1000.0;     // kg/m³
+const SEC_PER_DAY = 86400.0;    // seconds per day
+const H_SEC       = HORIZONS.map(yr => yr * 365.25 * SEC_PER_DAY);
+
+// Energy model constants
+const T_INJ           = 73.89;   // fixed injection temp: 165°F = 73.89°C
+const Q_PARASITIC_MIN = 24200;   // bbl/d → 20% parasitic
+const Q_PARASITIC_MAX = 169600;  // bbl/d → 40% parasitic
+function getTinj(){ return T_INJ; }
+function getOrcEff(){ return parseFloat(document.getElementById('e-orc').value) / 100; }
+
+// ── Energy production data ─────────────────────────────────────────────────
+// Formula: Q̇(MW) = ṁ(kg/s) × 4186 × (T_prod − T_inj) / 1e6
+// E(GWh)  = trapezoid integral of Q̇ over 30 years (8 time points)
+// T_inj default = 30°C, ρ = 1000 kg/m³, 1 bbl = 0.158987 m³
+const POWER_MW = {
+   1: [53.01,53.57,46.61,37.74,31.52,27.26,24.19,21.9],
+   2: [54.66,55.03,48.41,40.28,34.26,29.95,26.77,24.3],
+   3: [50.99,52.11,52.41,52.08,50.54,48.22,45.53,42.76],
+   4: [54.66,55.78,55.75,55.18,53.57,51.29,48.67,45.97],
+   5: [166.45,167.34,113.32,72.43,54.9,44.65,37.93,33.19],
+   6: [30.91,31.94,30.86,28.69,25.74,23.41,21.37,19.97],
+   7: [163.04,165.02,164.47,144.19,119.72,101.09,87.2,76.51],
+   8: [30.29,31.44,31.55,31.48,31.18,30.66,29.97,29.17],
+   9: [42.68,43.68,39.63,33.92,29.01,25.38,22.7,20.65],
+  10: [64.52,64.12,53.91,43.26,35.99,31.02,27.47,24.76],
+  11: [41.79,43.04,43.23,43.2,42.65,41.55,40.08,38.41],
+  12: [62.83,64.25,64.52,63.63,61.14,57.68,54.0,50.41],
+  13: [160.94,163.26,146.61,106.16,81.91,67.25,57.55,50.38],
+  14: [29.88,31.05,30.96,30.11,28.87,27.32,25.83,24.46],
+  15: [169.54,171.3,155.87,120.05,93.7,77.06,66.04,57.66],
+  16: [31.5,32.63,32.26,31.25,29.95,28.6,27.27,26.11],
+  17: [41.27,42.55,42.52,40.94,38.1,35.08,32.24,29.74],
+  18: [62.03,63.54,62.56,57.46,51.12,45.39,40.6,36.74],
+  19: [43.47,44.72,44.38,42.55,39.84,36.91,34.2,31.76],
+  20: [65.31,66.69,65.18,59.99,53.91,48.32,43.8,39.94],
+  21: [133.29,135.18,128.44,101.41,80.93,67.46,57.94,50.93],
+  22: [196.23,198.32,174.81,124.64,95.64,77.22,64.94,56.32],
+  23: [24.16,25.22,25.22,24.87,24.18,23.3,22.35,21.4],
+  24: [37.07,38.31,37.77,36.15,34.17,32.11,30.29,28.47],
+  25: [52.83,54.21,53.72,50.73,46.57,42.38,38.64,35.46],
+};
+// Pre-computed E at T_inj=73.89°C (165°F)
+const E_GWH_BASE = {
+   1: 9015.7,
+   2: 9641.0,
+   3: 12976.7,
+   4: 13816.7,
+   5: 18795.0,
+   6: 6838.8,
+   7: 32315.2,
+   8: 8109.5,
+   9: 8025.8,
+  10: 10394.1,
+  11: 11013.6,
+  12: 15696.8,
+  13: 24883.8,
+  14: 7483.1,
+  15: 27550.1,
+  16: 7829.0,
+  17: 9858.0,
+  18: 13465.5,
+  19: 10345.4,
+  20: 14223.9,
+  21: 23217.8,
+  22: 29222.2,
+  23: 6273.4,
+  24: 8932.6,
+  25: 12131.6,
+};
+
+const R = {dist:{lo:300,mid:450,hi:600},angle:{lo:60,mid:120,hi:180},spac:{lo:30,mid:90,hi:150},flow:{lo:1100,mid:1350,hi:1600}};
+const FKEYS = ['dist','angle','spac','flow'];
+const FLAB  = ['Distance (ft)','Angle (°)','Spacing (ft)','Flow/frac (bbl/d)'];
+
+// Sobol sensitivity for 30yr net electrical energy (GWhe) — N=50,000 MC samples
+// Full chain: T_pred → P_gross → P_elec_gross → subtract fixed Par_MWe → integrate
+
+// Sobol indices with TOTAL flow rate as the variable (instead of per-fracture)
+// Total flow = ceil(3160/spacing) × flow_per_frac
+// Note: spacing and total_flow become correlated in this parameterisation
+// so these indices reflect the combined spacing+flow effect differently
+const SOBOL_ENERGY_S1_TOTALFLOW = [0.1431, 0.0018, 0.3174, 0.2751]; // [dist, angle, spac, totalflow]
+const SOBOL_ENERGY_ST_TOTALFLOW = [0.2148, 0.0030, 0.5678, 0.5218];
+
+// ── Additional sensitivity analysis data ──────────────────────────────────
+// Tornado: OAT from baseline (all factors at mid-point = 1066 GWhe)
+
+// Best configuration from Monte Carlo optimisation (N=50,000)
+// dist=600ft, angle=120°, spac=30ft, flow=1600 bbl/d → ~1,868 GWhe net
+const BEST_CONFIG  = {dist:600, angle:120, spac:30, flow:1600, nf:106, qtot:169600};
+const BEST_TEMPS   = [222.3,224.0,221.1,196.9,173.6,156.4,144.0,134.6]; // predicted °C
+const BEST_P_NET   = [13.96,14.226,13.771,9.978,6.325,3.629,1.685,0.211]; // net MWe
+const BEST_E_GWH   = 1868.3;
+const BEST_PAR_MWE = 9.306;
+const TORNADO = {
+  dist:  {lo:745.6,  hi:1242.3, delta_lo:-320.8, delta_hi:175.9},
+  angle: {lo:1018.7, hi:1082.1, delta_lo:-47.7,  delta_hi:15.7},
+  spac:  {lo:1353.6, hi:729.9,  delta_lo:287.1,  delta_hi:-336.5},
+  flow:  {lo:916.3,  hi:1165.4, delta_lo:-150.1, delta_hi:99.0},
+  base:  1066.4
+};
+
+// Contour: spacing vs distance (20×20 grid, angle=mid, flow=mid)
+const CONTOUR_DIST = [300.0,315.8,331.6,347.4,363.2,378.9,394.7,410.5,426.3,442.1,457.9,473.7,489.5,505.3,521.1,536.8,552.6,568.4,584.2,600.0];
+const CONTOUR_SPAC = [30.0,36.3,42.6,48.9,55.3,61.6,67.9,74.2,80.5,86.8,93.2,99.5,105.8,112.1,118.4,124.7,131.1,137.4,143.7,150.0];
+const CONTOUR_E = [[631.2,646.6,674.8,708.1,741.4,756.9,759.9,757.9,757.1,746.0,725.3,715.1,698.9,698.8,672.8,665.3,654.9,641.7,600.6,607.9],[690.7,715.5,747.7,784.9,812.1,819.7,816.1,808.6,803.5,788.2,763.2,749.9,730.7,728.6,699.6,690.1,677.7,662.6,618.7,624.9],[755.4,789.6,829.8,861.7,880.1,880.1,870.1,857.4,848.2,828.7,799.6,783.3,761.1,757.1,725.1,713.7,699.4,682.3,635.7,640.9],[833.4,869.5,909.7,935.5,945.5,938.3,922.1,904.2,891.0,867.5,834.5,815.3,790.2,784.2,749.4,736.2,719.9,701.0,651.8,655.9],[907.6,947.4,991.9,1006.3,1008.3,994.1,971.9,949.2,932.1,904.7,867.8,845.9,818.0,810.1,772.6,757.5,739.4,718.6,667.0,669.9],[983.8,1033.9,1070.6,1074.3,1068.5,1047.5,1019.6,992.2,971.3,940.3,899.7,875.0,844.4,834.7,794.6,777.6,757.8,735.2,681.1,683.0],[1068.6,1116.6,1146.0,1139.3,1126.1,1098.7,1065.3,1033.2,1008.8,974.2,930.0,902.7,869.5,858.1,815.3,796.6,775.0,750.7,694.3,695.1],[1149.0,1199.4,1217.9,1201.3,1181.1,1147.4,1108.8,1072.4,1044.5,1006.4,958.8,929.0,893.2,880.1,834.9,814.5,791.2,765.2,706.6,706.3],[1226.3,1280.0,1286.5,1260.5,1233.5,1193.9,1150.2,1109.6,1078.4,1037.0,986.1,953.8,915.6,900.8,853.2,831.2,806.2,778.6,717.8,716.4],[1312.3,1356.6,1351.7,1316.7,1283.3,1238.0,1189.5,1144.9,1110.5,1065.9,1011.9,977.2,936.7,920.3,870.4,846.7,820.1,790.9,728.1,725.6],[1393.6,1429.3,1413.5,1370.0,1330.4,1279.8,1226.6,1178.3,1140.9,1093.2,1036.2,999.2,956.5,938.4,886.4,861.1,833.0,802.2,737.4,733.9],[1470.2,1498.0,1471.9,1420.4,1375.0,1319.2,1261.7,1209.7,1169.4,1118.9,1059.0,1019.8,974.9,955.3,901.2,874.4,844.7,812.4,745.8,741.1],[1546.6,1562.7,1527.0,1467.8,1416.9,1356.4,1294.7,1239.2,1196.2,1142.8,1080.2,1039.0,992.0,970.9,914.7,886.5,855.3,821.6,753.2,747.5],[1619.6,1623.4,1578.6,1512.3,1456.2,1391.1,1325.6,1266.8,1221.1,1165.2,1099.9,1056.7,1007.7,985.2,927.1,897.4,864.8,829.7,759.6,752.8],[1687.8,1680.2,1626.9,1553.9,1492.9,1423.6,1354.3,1292.5,1244.3,1185.9,1118.1,1073.0,1022.1,998.2,938.3,907.2,873.3,836.7,765.0,757.1],[1751.3,1732.9,1671.7,1592.5,1527.1,1453.7,1381.0,1316.2,1265.7,1204.9,1134.8,1087.9,1035.2,1010.0,948.3,915.9,880.6,842.7,769.5,760.5],[1809.9,1781.7,1713.2,1628.2,1558.6,1481.4,1405.5,1338.1,1285.3,1222.3,1150.0,1101.4,1047.0,1020.4,957.1,923.4,886.8,847.6,773.0,763.0],[1863.7,1826.5,1751.3,1661.0,1587.4,1506.9,1427.9,1358.0,1303.1,1238.0,1163.7,1113.4,1057.4,1029.6,964.7,929.7,891.9,851.5,775.5,764.4],[1912.7,1867.3,1786.0,1690.9,1613.7,1530.0,1448.2,1375.9,1319.1,1252.1,1175.8,1124.0,1066.5,1037.4,971.1,934.9,895.8,854.3,777.1,764.9],[1956.8,1904.1,1817.4,1717.8,1637.4,1550.7,1466.5,1392.0,1333.3,1264.5,1186.5,1133.2,1074.2,1044.0,976.3,938.9,898.7,856.0,777.7,764.4]];
+
+// Monte Carlo distribution (N=20,000 uniform samples)
+const MC_HIST = [{x:539,y:42},{x:588,y:258},{x:638,y:674},{x:688,y:1096},{x:738,y:1554},{x:787,y:1696},{x:837,y:1732},{x:887,y:1606},{x:937,y:1438},{x:986,y:1224},{x:1036,y:1143},{x:1086,y:1013},{x:1135,y:908},{x:1185,y:854},{x:1235,y:729},{x:1285,y:581},{x:1334,y:530},{x:1384,y:504},{x:1434,y:472},{x:1484,y:424},{x:1533,y:319},{x:1583,y:295},{x:1633,y:239},{x:1682,y:205},{x:1732,y:187},{x:1782,y:129},{x:1832,y:77},{x:1881,y:48},{x:1931,y:19},{x:1981,y:4}];
+const MC_STATS = {mean:1024,std:285,min:514,max:2006,p5:665,p25:803,p50:958,p75:1196,p95:1591};
+const SOBOL_ENERGY_S1 = [0.3550, 0.0043, 0.4808, 0.0373]; // [dist, angle, spac, flow/frac]
+const SOBOL_ENERGY_ST = [0.4880, 0.0082, 0.5958, 0.0534];
+
+// Sobol sensitivity indices — computed via Monte Carlo (N=100,000) on fitted surrogate
+// S1 = first-order (direct effect only), ST = total-order (including all interactions)
+const SOBOL_S1 = {
+  0: [0.0817,0.2116,0.4708,0.0151],
+  1: [0.0000,0.0685,0.8900,0.0258],
+  5: [0.5303,0.0822,0.1049,0.0000],
+ 10: [0.4923,0.0358,0.3998,0.0267],
+ 15: [0.5238,0.0089,0.5249,0.0118],
+ 20: [0.4087,0.0144,0.5274,0.0200],
+ 25: [0.4165,0.0052,0.5630,0.0270],
+ 30: [0.4061,0.0097,0.5346,0.0302],
+};
+const SOBOL_ST = {
+  0: [0.0338,0.1641,0.7455,0.0722],
+  1: [0.0260,0.2303,0.7088,0.0589],
+  5: [0.8657,0.0613,0.3022,0.0380],
+ 10: [0.5831,0.0194,0.4638,0.0283],
+ 15: [0.4872,0.0113,0.5094,0.0226],
+ 20: [0.4436,0.0088,0.5329,0.0223],
+ 25: [0.4239,0.0081,0.5529,0.0233],
+ 30: [0.4037,0.0078,0.5648,0.0245],
+};
+const TERMS = ['Intercept','x₁ (Dist)','x₂ (Angle)','x₃ (Spacing)','x₄ (Flow)',
+               'x₁²','x₂²','x₃²','x₄²',
+               'x₁x₂','x₁x₃','x₁x₄','x₂x₃','x₂x₄','x₃x₄',
+               'x₁x₃x₄','x₁²x₃','x₁x₃²'];
+
+// ============================================================
+//  STATE
+// ============================================================
+let horizon = 0;
+let models  = {};  // keyed by year string
+
+let chartAvp=null, chartSensTime=null, chartRSM=null, chartRank=null;
+let chartDecline=null, chartPred=null;
+let chartPowerPred=null, chartPowerCurves=null;
+let chartEnergySobol=null, chartTornado=null, chartContour=null, chartMcHist=null;
+// ============================================================
+//  OLS SOLVER
+// ============================================================
+function code(v,r){ return (v - r.mid)/(r.hi - r.mid); }
+
+function designRow(run){
+  const [x1,x2,x3,x4] = FKEYS.map(f => code(run[f], R[f]));
+  return [1, x1,x2,x3,x4,
+          x1*x1,x2*x2,x3*x3,x4*x4,
+          x1*x2,x1*x3,x1*x4,x2*x3,x2*x4,x3*x4,
+          x1*x3*x4,      // distance × spacing × flow  (key 5yr interaction)
+          x1*x1*x3,      // distance² × spacing
+          x1*x3*x3];     // distance × spacing²
 }
 
-function isDark(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;}
+function solveOLS(X, Y){
+  const n=X.length, p=X[0].length;
+  const AtA = Array.from({length:p}, () => new Array(p).fill(0));
+  const Atb = new Array(p).fill(0);
+  for(let i=0;i<n;i++)
+    for(let j=0;j<p;j++){
+      Atb[j] += X[i][j]*Y[i];
+      for(let k=0;k<p;k++) AtA[j][k] += X[i][j]*X[i][k];
+    }
+  // Gaussian elimination
+  const M = AtA.map((row,i) => [...row, Atb[i]]);
+  for(let c=0;c<p;c++){
+    let mr=c;
+    for(let r=c+1;r<p;r++) if(Math.abs(M[r][c])>Math.abs(M[mr][c])) mr=r;
+    [M[c],M[mr]] = [M[mr],M[c]];
+    const pv = M[c][c]; if(Math.abs(pv)<1e-12) continue;
+    for(let r=0;r<p;r++){
+      if(r===c) continue;
+      const f = M[r][c]/pv;
+      for(let cc=c;cc<=p;cc++) M[r][cc] -= f*M[c][cc];
+    }
+    for(let cc=c;cc<=p;cc++) M[c][cc] /= pv;
+  }
+  return M.map(row => row[p]);
+}
 
-function chartDefaults(){
-  return{
-    gridColor: isDark()?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)',
-    tickColor: isDark()?'#6b6b66':'#9a9a94',
-    titleColor: isDark()?'#9a9a94':'#6b6b66',
+function fitAllModels(){
+  models = {};
+  HORIZONS.forEach((yr, hi) => {
+    const Y = DOE.map(r => TEMPS[r.s][hi]);
+    const X = DOE.map(r => designRow(r));
+    const beta = solveOLS(X, Y);
+    const pred = DOE.map(r => designRow(r).reduce((s,v,j) => s+v*beta[j], 0));
+    const mean = Y.reduce((a,b)=>a+b,0)/Y.length;
+    const ssT  = Y.reduce((s,v)=>s+(v-mean)**2,0);
+    const ssR  = Y.reduce((s,v,i)=>s+(v-pred[i])**2,0);
+    const r2   = 1 - ssR/ssT;
+    const r2a  = 1 - (1-r2)*(Y.length-1)/(Y.length-beta.length);
+    const rmse = Math.sqrt(ssR/Y.length);
+    models[yr] = { beta, pred, Y, r2, r2a, rmse };
+  });
+
+  // update stats panel
+  // model stats display removed
+
+  refreshAll();
+}
+
+function predict(run, yr){
+  if(!models[yr]) return null;
+  return designRow(run).reduce((s,v,j) => s + v*models[yr].beta[j], 0);
+}
+
+
+// ============================================================
+//  SLIDER HANDLER
+// ============================================================
+function sliderChanged(){
+  const spac = parseFloat(document.getElementById('sl-spac').value);
+  const qfrac = parseFloat(document.getElementById('sl-flow').value);
+  const nFracs = Math.ceil(3160 / spac);
+  const totalQ = nFracs * qfrac;
+
+  // update labels
+  document.getElementById('lbl-dist').textContent  = document.getElementById('sl-dist').value  + ' ft';
+  document.getElementById('lbl-angle').textContent = document.getElementById('sl-angle').value + '°';
+  document.getElementById('lbl-spac').textContent  = spac + ' ft';
+  document.getElementById('lbl-flow').textContent  = Math.round(qfrac).toLocaleString();
+  document.getElementById('lbl-nfracs').textContent = nFracs;
+  // unit conversions
+  // 1 bbl = 0.158987 m³, 1 day = 1440 min, 1 m³ = 1000 l
+  const bbld   = totalQ;
+  const bblmin = totalQ / 1440;
+  const ls     = totalQ * 0.158987 * 1000 / 86400;   // bbl/d → l/s
+  const galmin = totalQ * 42 / 1440;                  // 1 bbl = 42 US gal
+
+  document.getElementById('lbl-q-bbld').textContent   = bbld.toLocaleString();
+  document.getElementById('lbl-q-bblmin').textContent = bblmin.toFixed(2);
+  document.getElementById('lbl-q-ls').textContent     = ls.toFixed(2);
+  document.getElementById('lbl-q-galmin').textContent = Math.round(galmin).toLocaleString();
+
+  // update prediction box
+  const run = getSliderRun();
+  if(models[horizon]){
+    const p = predict(run, horizon);
+    document.getElementById('pred-val').textContent  = p.toFixed(1);
+    document.getElementById('pred-unit').textContent = 'Predicted °C at ' + horizon + ' yr';
+  }
+
+  drawWellDiagram();
+
+  // re-render active tab if needed
+  const activeTab = document.querySelector('#main-tabs .tab.act');
+  if(activeTab){
+    const name = activeTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+    if(name === 'predict') renderPredCurve();
+    if(name === 'rsm')     renderRSM();
+  }
+}
+
+function getSliderRun(){
+  return {
+    dist:  parseFloat(document.getElementById('sl-dist').value),
+    angle: parseFloat(document.getElementById('sl-angle').value),
+    spac:  parseFloat(document.getElementById('sl-spac').value),
+    flow:  parseFloat(document.getElementById('sl-flow').value),
   };
 }
 
-function mkChart(id, datasets, yLabel, xMax){
-  if(CHARTS[id])CHARTS[id].destroy();
-  const d=chartDefaults();
-  CHARTS[id]=new Chart(document.getElementById(id),{
-    type:'line', data:{datasets},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{
-        backgroundColor: isDark()?'#2c2c32':'#ffffff',
-        titleColor: isDark()?'#f0efe8':'#1a1a18',
-        bodyColor: isDark()?'#9a9a94':'#6b6b66',
-        borderColor: isDark()?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.1)',
-        borderWidth:1,
-        titleFont:{family:"'Courier New', monospace", size:11},
-        bodyFont:{family:"'Courier New', monospace", size:11},
-        callbacks:{
-          title:it=>`Year ${it[0].parsed.x.toFixed(2)}`,
-          label:it=>` SC${vis()[it.datasetIndex]}: ${it.parsed.y.toLocaleString(undefined,{maximumFractionDigits:2})}`
+// ============================================================
+//  WELL DIAGRAM
+// ============================================================
+function drawWellDiagram(){
+  const dist  = parseFloat(document.getElementById('sl-dist').value);
+  const angle = parseFloat(document.getElementById('sl-angle').value);
+  const spac  = parseFloat(document.getElementById('sl-spac').value);
+  const flow  = parseFloat(document.getElementById('sl-flow').value);
+
+  const W=220, H=130;
+  const cx=110, cy=95;     // injector centre
+  const scale = 38;        // px per 300 ft step
+  const D = dist/300 * scale;
+
+  let inner = '';
+
+  // markers
+  inner += `<defs>
+    <marker id="mG" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3z" fill="#2980b9"/>
+    </marker>
+    <marker id="mR" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3z" fill="#c0392b"/>
+    </marker>
+  </defs>`;
+
+  function circ(x,y,topLabel,botLabel,col,r){
+    r = r||16;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${col}" stroke-width="2"/>
+            <text x="${x}" y="${y-2}" text-anchor="middle" font-size="9" fill="${col}" font-weight="700">${topLabel}</text>
+            <text x="${x}" y="${y+9}" text-anchor="middle" font-size="9" fill="${col}">${botLabel}</text>`;
+  }
+  function line(x1,y1,x2,y2,col,dash,marker){
+    const d = dash ? 'stroke-dasharray="5,3"' : '';
+    const mk = marker ? `marker-end="url(#${marker})"` : '';
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="1.6" ${d} ${mk}/>`;
+  }
+  function txt(x,y,s,col,anchor){
+    return `<text x="${x}" y="${y}" text-anchor="${anchor||'middle'}" font-size="8" fill="${col||'#555'}">${s}</text>`;
+  }
+
+  if(angle === 180){
+    // Collinear: P1 ← I1 → P2
+    const p1x=cx-D, p2x=cx+D, iy=cy;
+    inner += line(cx-6, iy, p1x+16, iy, '#c0392b', true, 'mR');
+    inner += line(cx+6, iy, p2x-16, iy, '#c0392b', true, 'mR');
+    inner += circ(p1x, iy, 'P','1','#27ae60');
+    inner += circ(p2x, iy, 'P','2','#27ae60');
+    inner += circ(cx,  iy, 'I','1','#c0392b');
+    inner += txt((p1x+cx)/2, iy-20, dist+' ft', '#555');
+    inner += txt((p2x+cx)/2, iy-20, dist+' ft', '#555');
+    inner += txt(cx, iy+28, '180°', '#c0392b');
+  } else {
+    // V shape
+    const halfRad = (angle/2)*Math.PI/180;
+    const p1x = cx - Math.sin(halfRad)*D;
+    const p1y = cy - Math.cos(halfRad)*D;
+    const p2x = cx + Math.sin(halfRad)*D;
+    const p2y = cy - Math.cos(halfRad)*D;
+    const p2p = Math.round(2*dist*Math.sin(halfRad));
+
+    // P1—P2 solid blue
+    inner += line(p1x+16, p1y, p2x-16, p2y, '#2980b9', false, 'mG');
+    inner += txt(cx, p1y-10, p2p+' ft', '#2980b9');
+    // I to producers dashed red
+    inner += line(cx, cy-16, p1x+8, p1y+10, '#c0392b', true, 'mR');
+    inner += line(cx, cy-16, p2x-8, p2y+10, '#c0392b', true, 'mR');
+    // arm distances
+    inner += txt((cx+p1x)/2-12, (cy+p1y)/2, dist+' ft', '#777');
+    inner += txt((cx+p2x)/2+12, (cy+p2y)/2, dist+' ft', '#777');
+    // angle label
+    inner += txt(cx, cy+12, angle+'°', '#c0392b');
+    // nodes
+    inner += circ(p1x, p1y, 'P','1','#27ae60');
+    inner += circ(p2x, p2y, 'P','2','#27ae60');
+    inner += circ(cx,  cy,  'I','1','#c0392b');
+  }
+
+  // fracture count: ceil(3160 / spacing)
+  const nFracs = Math.ceil(3160 / spac);
+  document.getElementById('well-svg').innerHTML =
+    `<rect width="${W}" height="${H}" fill="#f5f6f8" rx="8"/>
+     <text x="8" y="12" font-size="8" fill="#aaa">Injector (red) · Producers (green)</text>
+     ${inner}`;
+  document.getElementById('cfg-label').innerHTML =
+    `Dist: <b>${dist} ft</b> · Angle: <b>${angle}°</b><br>Spacing: <b>${spac} ft</b> (~${nFracs} fracs) · Flow: <b>${flow} bbl/d</b>`;
+}
+
+// ============================================================
+//  ALL DECLINE CURVES
+// ============================================================
+function renderAllDecline(){
+  const hlSel   = parseInt(document.getElementById('hl-sel').value) || 0;
+  const colorBy = document.getElementById('color-by').value;
+
+  const pals = {
+    spac:  {30:'#185FA5', 90:'#27ae60', 150:'#c0392b'},
+    flow:  {1100:'#185FA5', 1350:'#27ae60', 1600:'#c0392b'},
+    dist:  {300:'#185FA5', 450:'#27ae60', 600:'#c0392b'},
+    angle: {60:'#185FA5',  120:'#27ae60', 180:'#c0392b'},
+  };
+  const klabs = {
+    spac:  {30:'30 ft',90:'90 ft',150:'150 ft'},
+    flow:  {1100:'1100 bbl/d',1350:'1350 bbl/d',1600:'1600 bbl/d'},
+    dist:  {300:'300 ft',450:'450 ft',600:'600 ft'},
+    angle: {60:'60°',120:'120°',180:'180°'},
+  };
+  const palVals = Object.keys(pals[colorBy]).map(Number);
+
+  const datasets = DOE.map(run => {
+    const bv = run[colorBy];
+    const nearest = palVals.reduce((a,b) => Math.abs(b-bv)<Math.abs(a-bv)?b:a);
+    const col   = pals[colorBy][nearest];
+    const isHL  = (run.s === hlSel);
+    return {
+      label: `S${run.s}`,
+      data: TS[run.s].map(p => ({ x: p[0], y: p[1] })),
+      borderColor:  isHL ? '#ff6600' : col,
+      borderWidth:  isHL ? 3 : 1.2,
+      pointRadius:  isHL ? 4 : 0,
+      fill: false,
+      tension: 0.3,
+      order: isHL ? 0 : 1,
+    };
+  });
+
+  if(chartDecline) chartDecline.destroy();
+  chartDecline = new Chart(document.getElementById('chart-decline'), {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => `Scenario ${DOE[ctx[0].datasetIndex].s}`,
+            label: ctx => `Year ${ctx.parsed.x}:  ${ctx.parsed.y.toFixed(1)} °C`,
+          }
         }
-      }},
-      scales:{
-        x:{type:'linear',min:0,max:xMax||30,
-          title:{display:true,text:'Time (years)',color:d.titleColor,font:{family:"'Courier New', monospace",size:11}},
-          ticks:{callback:v=>`${v}yr`,maxTicksLimit:11,color:d.tickColor,font:{family:"'Courier New', monospace",size:10}},
-          grid:{color:d.gridColor}
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          min: 0.5,
+          max: 30,
+          title: { display: true, text: 'Production time (years)', font: { size: 11 } },
+          ticks: { stepSize: 5, font: { size: 10 } },
         },
-        y:{
-          title:{display:true,text:yLabel,color:d.titleColor,font:{family:"'Courier New', monospace",size:11}},
-          ticks:{color:d.tickColor,font:{family:"'Courier New', monospace",size:10}},
-          grid:{color:d.gridColor}
+        y: {
+          title: { display: true, text: 'Temperature (°C)', font: { size: 11 } },
+          ticks: { font: { size: 10 } },
         }
       }
     }
   });
+
+  // legend
+  const legHTML = Object.entries(pals[colorBy]).map(([k,c]) =>
+    `<div style="display:flex;align-items:center;gap:4px">
+       <div style="width:18px;height:2px;background:${c};border-radius:1px;flex-shrink:0"></div>
+       <span>${colorBy}: ${klabs[colorBy][k]}</span>
+     </div>`
+  ).join('') + (hlSel ?
+    `<div style="display:flex;align-items:center;gap:4px">
+       <div style="width:18px;height:3px;background:#ff6600;border-radius:1px;flex-shrink:0"></div>
+       <span>S${hlSel} highlighted</span>
+     </div>` : '');
+  document.getElementById('leg-decline').innerHTML = legHTML;
 }
 
-function mkDs(v, ptsFn){
-  return v.map((k,i)=>({
-    label:`SC${k}`,
-    data:ptsFn(k),
-    borderColor:COLORS[i%COLORS.length],
-    borderWidth:2,
-    borderDash:DASHES[i%DASHES.length],
-    pointRadius:0,
-    tension:0.3,
-    hidden:hidden.has(k),
-    parsing:false
+// ============================================================
+//  PREDICTION DECLINE CURVE
+// ============================================================
+function renderPredCurve(){
+  if(!models[1]) return;
+  const run = getSliderRun();
+
+  // predicted points at each horizon (0yr model handles initial value)
+  const predData = HORIZONS.map(yr => ({ x: yr, y: predict(run, yr) }));
+
+  const datasets = [
+    {
+      label: 'Surrogate model (prediction)',
+      data: predData,
+      borderColor: '#ff6600',
+      backgroundColor: 'rgba(255,102,0,0.1)',
+      borderWidth: 3,
+      pointRadius: 5,
+      pointStyle: 'circle',
+      fill: false,
+      tension: 0.4,
+      order: 0,
+    },
+    {
+      label: 'MC optimal (600ft, 30ft spac, 1600 bbl/d) — surrogate',
+      data: HORIZONS.map((yr,i) => ({ x: yr, y: BEST_TEMPS[i] })),
+      borderColor: '#185FA5',
+      borderWidth: 2,
+      pointRadius: 3,
+      fill: false,
+      tension: 0.3,
+      borderDash: [5,4],
+      order: 1,
+    }
+  ];
+
+  if(chartPred) chartPred.destroy();
+  chartPred = new Chart(document.getElementById('chart-pred'), {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: { font: { size: 10 }, boxWidth: 14, padding: 8 }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} °C`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          min: 0.5,
+          max: 30,
+          title: { display: true, text: 'Production time (years)', font: { size: 11 } },
+          ticks: { stepSize: 5, font: { size: 10 } },
+        },
+        y: {
+          title: { display: true, text: 'Temperature (°C)', font: { size: 11 } },
+          ticks: { font: { size: 10 } },
+        }
+      }
+    }
+  });
+
+  // metrics row
+  document.getElementById('pred-all-metrics').innerHTML = HORIZONS.map(yr => {
+    const p = predict(run, yr);
+    return `<div class="mc">
+      <div class="ml">${yr} yr</div>
+      <div class="mv" style="font-size:15px">${p.toFixed(1)}</div>
+      <div class="mu">°C</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('pred-note').innerHTML =
+    `Prediction for: Dist <b>${run.dist} ft</b>, Angle <b>${run.angle}°</b>, Spacing <b>${run.spac} ft</b>, Flow <b>${run.flow} bbl/d</b>.
+     Dashed lines = 3 nearest numerically simulated scenarios.`;
+
+  document.getElementById('leg-pred').innerHTML = '';
+}
+
+// ============================================================
+//  EQUATION TAB
+// ============================================================
+function updateEquationTab(){
+  if(!models[horizon]) return;
+  const { beta, r2, r2a, rmse } = models[horizon];
+  document.getElementById('m-r2').textContent   = r2.toFixed(4);
+  document.getElementById('m-r2a').textContent  = r2a.toFixed(4);
+  document.getElementById('m-rmse').textContent = rmse.toFixed(2);
+  document.getElementById('m-hor').textContent  = horizon + 'yr';
+
+  let eq = `T_prod(${horizon}yr) = <span class="${beta[0]>=0?'pos':'neg'}">${beta[0].toFixed(2)}</span>`;
+  for(let i=1;i<beta.length;i++){
+    const s = beta[i]>=0?'+':'';
+    eq += `\n  ${s}<span class="${beta[i]>=0?'pos':'neg'}">${beta[i].toFixed(3)}</span> · ${TERMS[i]}`;
+  }
+  document.getElementById('eq-box').innerHTML = eq;
+
+  const maxB = Math.max(...beta.slice(1).map(Math.abs));
+  document.getElementById('coeff-body').innerHTML = beta.map((b,i) => {
+    const rel = i===0 ? 100 : Math.abs(b)/maxB*100;
+    const bar = `<div class="bar-track"><div class="bar-fill" style="width:${rel.toFixed(0)}%;background:${b>=0?'#185FA5':'#a32d2d'}"></div></div>`;
+    const eff = i===0 ? '—' : Math.abs(b)/rmse>1.5 ?
+      `<span class="badge b-green">Active</span>` :
+      `<span class="badge b-amber">Minor</span>`;
+    return `<tr><td>${TERMS[i]}</td><td style="font-family:monospace">${b>=0?'+':''}${b.toFixed(3)}</td><td>${bar}</td><td>${eff}</td></tr>`;
+  }).join('');
+
+  const { Y, pred } = models[horizon];
+  const mn = Math.min(...Y,...pred)*0.97, mx = Math.max(...Y,...pred)*1.03;
+  if(chartAvp) chartAvp.destroy();
+  chartAvp = new Chart(document.getElementById('chart-avp'), {
+    type: 'scatter',
+    data: { datasets: [
+      { label:'Runs', data: Y.map((v,i)=>({x:pred[i],y:v})), backgroundColor:'#185FA5', pointRadius:5 },
+      { label:'1:1',  data:[{x:mn,y:mn},{x:mx,y:mx}], type:'line', borderColor:'#ccc', borderDash:[4,4], pointRadius:0, fill:false }
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{font:{size:14}} } },
+      scales:{ x:{min:mn,max:mx,title:{display:true,text:'Predicted (°C)',font:{size:14}}},
+               y:{min:mn,max:mx,title:{display:true,text:'Numerical Simulation actual (°C)',font:{size:14}}} } }
+  });
+}
+
+// ============================================================
+//  SENSITIVITY
+// ============================================================
+let sobolMode = 'S1';
+let energySobolMode = 'ST';  // default to total-order for energy
+
+function setEnergySobolMode(mode, btn){
+  energySobolMode = mode;
+  document.querySelectorAll('#btn-e-s1,#btn-e-st').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  renderEnergySobol();
+}
+
+let flowMode = 'frac';
+function setFlowMode(mode, btn){
+  flowMode = mode;
+  document.querySelectorAll('#btn-flow-frac,#btn-flow-total').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  renderEnergySobol();
+}
+
+function renderEnergySobol(){
+  const isTotalFlow = (flowMode === 'total');
+  const s1data = isTotalFlow ? SOBOL_ENERGY_S1_TOTALFLOW : SOBOL_ENERGY_S1;
+  const stdata = isTotalFlow ? SOBOL_ENERGY_ST_TOTALFLOW : SOBOL_ENERGY_ST;
+  const activeData = energySobolMode === 'S1' ? s1data : stdata;
+  const cols = ['#185FA5','#c0392b','#27ae60','#f39c12'];
+  const maxS = Math.max(...activeData);
+
+  // Labels: swap flow label depending on mode
+  const labels = ['Distance (ft)', 'Angle (°)', 'Spacing (ft)',
+                  isTotalFlow ? 'Total flow (bbl/d)' : 'Flow/frac (bbl/d)'];
+
+  document.getElementById('energy-sobol-bars').innerHTML = labels.map((lab,i) => {
+    const s = activeData[i];
+    const pct = (s/maxS*100).toFixed(0);
+    return `<div class="srow" style="margin-bottom:8px">
+      <label style="min-width:160px;font-size:12px">${lab}</label>
+      <div class="bar-track" style="height:8px">
+        <div class="bar-fill" style="width:${pct}%;background:${cols[i]};height:8px"></div>
+      </div>
+      <span style="font-size:13px;font-weight:700;color:${cols[i]};min-width:60px;text-align:right">
+        ${(s*100).toFixed(1)}%
+      </span>
+    </div>`;
+  }).join('');
+
+  if(chartEnergySobol) chartEnergySobol.destroy();
+  chartEnergySobol = new Chart(document.getElementById('chart-energy-sobol'), {
+    type: 'bar',
+    data: {
+      labels: labels.map(l => l.split(' ')[0]),
+      datasets: [
+        { label: 'First-order S₁ (direct effect)',
+          data: s1data.map(v=>v*100),
+          backgroundColor: cols.map(c=>c+'bb'), borderColor: cols, borderWidth: 1.5 },
+        { label: 'Total-order Sₜ (incl. interactions)',
+          data: stdata.map(v=>v*100),
+          backgroundColor: cols.map(c=>c+'33'), borderColor: cols,
+          borderWidth: 1.5 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{ font:{size:14}, boxWidth:12 } },
+        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y.toFixed(1)}%` } }
+      },
+      scales: {
+        x: { ticks:{font:{size:14}} },
+        y: { min:0, max:75,
+             title:{ display:true, text:'Sensitivity index (%)', font:{size:14} },
+             ticks:{ font:{size:14}, callback: v=>v+'%' } }
+      }
+    }
+  });
+}
+function setSobolMode(mode, btn){
+  sobolMode = mode;
+  document.querySelectorAll('#btn-s1,#btn-st').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  updateSensitivity();
+}
+
+function updateSensitivity(){
+  if(!models[horizon]) return;
+  const { beta, rmse } = models[horizon];
+  const sobolData = sobolMode === 'S1' ? SOBOL_S1 : SOBOL_ST;
+  const sobolAtHorizon = sobolData[horizon] || sobolData[0];
+  const cols = ['#185FA5','#c0392b','#27ae60','#f39c12'];
+
+  // Sobol bar chart
+  const maxS = Math.max(...sobolAtHorizon);
+  // per-horizon bar removed
+
+  // per-horizon time chart removed
+
+  renderEnergySobol();
+  renderTornado();
+  renderContour();
+  renderMcHist();
+
+  // RSM coefficient bars (reference)
+  const maxB = Math.max(...beta.slice(1).map(Math.abs));
+  function mkBars(id, idxArr, col){
+    document.getElementById(id).innerHTML = idxArr.map(i => {
+      const b = beta[i], pct = (Math.abs(b)/maxB*100).toFixed(0);
+      return `<div class="srow" style="margin-bottom:5px">
+        <label style="min-width:90px;font-size:10px">${TERMS[i]}</label>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+        <span style="font-size:10px;color:var(--text3);min-width:55px;text-align:right">${b>=0?'+':''}${b.toFixed(2)}</span>
+      </div>`;
+    }).join('');
+  }
+  mkBars('bars-main', [1,2,3,4],          '#185FA5');
+  mkBars('bars-quad', [5,6,7,8],          '#7a4f00');
+  mkBars('bars-int',  [9,10,11,12,13,14], '#27ae60');
+}
+
+// ============================================================
+//  RESPONSE SURFACE
+// ============================================================
+function renderRSM(){
+  if(!models[horizon]) return;
+  const xi = parseInt(document.getElementById('rsm-x').value);
+  const yi = parseInt(document.getElementById('rsm-y').value);
+  if(xi === yi) return;
+
+  const rs    = [R.dist, R.angle, R.spac, R.flow];
+  const fixed = FKEYS.map((f,i) => parseFloat(document.getElementById('sl-'+f).value));
+  const N=11, xr=rs[xi], yr2=rs[yi];
+  const xv = Array.from({length:N}, (_,i) => xr.lo  + i*(xr.hi -xr.lo) /(N-1));
+  const yv = Array.from({length:N}, (_,i) => yr2.lo + i*(yr2.hi-yr2.lo)/(N-1));
+
+  const pts = []; let mn=1e9, mx=-1e9;
+  yv.forEach(yval => xv.forEach(xval => {
+    const cv = FKEYS.map((f,i) => { let v=fixed[i]; if(i===xi) v=xval; if(i===yi) v=yval; return code(v,rs[i]); });
+    const [c1,c2,c3,c4] = cv;
+    const row = [1,c1,c2,c3,c4,c1*c1,c2*c2,c3*c3,c4*c4,c1*c2,c1*c3,c1*c4,c2*c3,c2*c4,c3*c4];
+    const z = row.reduce((s,v,j) => s + v*models[horizon].beta[j], 0);
+    pts.push({x:xval, y:yval, z});
+    if(z<mn) mn=z; if(z>mx) mx=z;
   }));
-}
 
-function mkLeg(elId, v){
-  const el=document.getElementById(elId);
-  el.innerHTML='';
-  v.forEach((k,i)=>{
-    const d=document.createElement('div');
-    d.className='leg-item'+(hidden.has(k)?' hidden-sc':'');
-    d.innerHTML=`<div class="leg-dot" style="background:${COLORS[i%COLORS.length]}"></div><span>SC${k} · ${META[k].dist}ft ${META[k].angle}° ${META[k].spacing}sp ${META[k].q}q</span>`;
-    d.onclick=()=>{hidden.has(k)?hidden.delete(k):hidden.add(k); renderAll();};
-    el.appendChild(d);
-  });
-}
+  function zcolor(z){
+    const t = (z-mn)/(mx-mn||1);
+    const stops = [[24,95,165],[50,150,50],[239,159,39],[216,90,48]];
+    const i = Math.min(Math.floor(t*3),2), f=t*3-i;
+    const [r1,g1,b1]=stops[i],[r2,g2,b2]=stops[i+1];
+    return `rgba(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)},0.85)`;
+  }
 
-// ── Renders ────────────────────────────────────────────────────────────────
-function renderTemp(){
-  const v=vis();
-  mkChart('chartTemp',
-    mkDs(v,k=>TDATA[k].times.map((t,j)=>({x:t/365, y:cvtT(TDATA[k].temps[j],S.tempUnit)}))),
-    `Temp (${lblT(S.tempUnit)})`
-  );
-  mkLeg('leg-temp',v);
-}
-
-function renderFlow(){
-  const v=vis();
-  mkChart('chartFlow',
-    mkDs(v,k=>{
-      const m=META[k];
-      const q=S.flowMode==='total'?cvtF(m.q*m.nfrac*1,S.flowUnit):cvtF(m.q,S.flowUnit);
-      return TDATA[k].times.map(t=>({x:t/365, y:q}));
-    }),
-    `${S.flowMode==='total'?'Total (2 producers)':'Per fracture'} flowrate (${lblF(S.flowUnit)})`
-  );
-  mkLeg('leg-flow',v);
-}
-
-function renderTable(){
-  const isT=S.tblMode==='temp';
-  document.getElementById('tbl-tu').style.display=isT?'':'none';
-  document.getElementById('tbl-fu').style.display=isT?'none':'';
-
-  const MLS=['1d','30d','90d','1yr','3yr','5yr','10yr','20yr','30yr'];
-  const MK=['t1','t30','t90','t365','t1095','t1825','t3650','t7300','t10950'];
-  const u=isT?S.tblTU:S.tblFU;
-  const unit=isT?lblT(u):lblF(u);
-  const cvt=isT?v=>cvtT(v,u):v=>cvtF(v,u);
-  const fmt=isT?v=>fmtT(v):v=>fmtF(v,u);
-
-  document.getElementById('tbl-head').innerHTML=`<tr>
-    <th>SC</th><th>Dist</th><th>Angle</th><th>Spacing</th><th>Q/frac</th><th>Fracs</th><th>Total Q (2P)</th>
-    ${MLS.map(l=>`<th>${l} (${unit})</th>`).join('')}
-  </tr>`;
-
-  const allV=MK.map(c=>T_TBL.map(r=>r[c]).filter(v=>v!=null));
-  const maxV=allV.map(a=>Math.max(...a));
-  const minV=allV.map(a=>Math.min(...a));
-
-  const body=document.getElementById('tbl-body');
-  body.innerHTML='';
-  T_TBL.forEach(row=>{
-    const m=META[String(row.sc)];
-    const tr=document.createElement('tr');
-    const qf=cvtF(m.q,S.tblFU);
-    const qt=cvtF(m.q*m.nfrac*1,S.tblFU);
-    tr.innerHTML=`<td><strong>SC${row.sc}</strong></td><td>${m.dist} ft</td><td>${m.angle}°</td><td>${m.spacing} ft</td><td>${fmtF(qf,S.tblFU)}</td><td>${m.nfrac}</td><td>${fmtF(qt,S.tblFU)}</td>`;
-    MK.forEach((c,ci)=>{
-      const v=row[c];
-      const td=document.createElement('td');
-      if(v==null){td.textContent='—'; td.style.color='var(--text-muted)';}
-      else{
-        td.textContent=fmt(cvt(v));
-        if(v===maxV[ci]) td.className='hi';
-        else if(v===minV[ci]) td.className='lo';
-      }
-      tr.appendChild(td);
-    });
-    body.appendChild(tr);
-  });
-}
-
-function renderBar(){
-  const isT=S.cmpMetric==='temp';
-  document.getElementById('cmp-tu').style.display=isT?'':'none';
-  document.getElementById('cmp-fu').style.display=isT?'none':'';
-
-  const mk=isT?'t'+currentMs:'t'+currentMs; // both use T_TBL for now
-  const rows=T_TBL.filter(r=>r[mk]!=null);
-  const u=isT?S.cmpTU:S.cmpFU;
-  const cvt=isT?v=>cvtT(v,u):v=>{const m=META[String(T_TBL.find(x=>x['t'+currentMs]===v)?.sc)]; return cvtF((m?.q||1350)*(m?.nfrac||36)*1,u);};
-  const fmt=isT?v=>fmtT(v):v=>fmtF(v,u);
-  const lbl=isT?lblT(u):lblF(u);
-
-  const labels=rows.map(r=>`SC${r.sc}`);
-  const vals=rows.map(r=>{
-    if(isT) return cvtT(r[mk],u);
-    const m=META[String(r.sc)];
-    return cvtF(m.q*m.nfrac*1,u);
-  });
-
-  if(CHARTS.bar)CHARTS.bar.destroy();
-  const d=chartDefaults();
-  CHARTS.bar=new Chart(document.getElementById('barChart'),{
-    type:'bar',
-    data:{labels, datasets:[{
-      label:'val', data:vals,
-      backgroundColor:COLORS.slice(0,vals.length).map(c=>c+'bb'),
-      borderColor:COLORS.slice(0,vals.length),
-      borderWidth:1.5
+  if(chartRSM) chartRSM.destroy();
+  chartRSM = new Chart(document.getElementById('chart-rsm'), {
+    type: 'bubble',
+    data: { datasets: [{
+      data: pts.map(p=>({x:p.x, y:p.y, r:9, _z:p.z})),
+      backgroundColor: pts.map(p=>zcolor(p.z)),
+      borderWidth: 0,
     }]},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{
-        backgroundColor:isDark()?'#2c2c32':'#ffffff',
-        titleColor:isDark()?'#f0efe8':'#1a1a18',
-        bodyColor:isDark()?'#9a9a94':'#6b6b66',
-        borderColor:isDark()?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.1)',
-        borderWidth:1,
-        titleFont:{family:"'Courier New', monospace", size:11},
-        bodyFont:{family:"'Courier New', monospace", size:11},
-        callbacks:{label:it=>` ${fmt(it.parsed.y)} ${lbl}`}
-      }},
-      scales:{
-        x:{ticks:{color:d.tickColor,font:{family:"'Courier New', monospace",size:10}},grid:{display:false}},
-        y:{min:Math.min(...vals)*0.97,
-          title:{display:true,text:lbl,color:d.titleColor,font:{family:"'Courier New', monospace",size:11}},
-          ticks:{color:d.tickColor,font:{family:"'Courier New', monospace",size:10},callback:v=>fmt(v)},
-          grid:{color:d.gridColor}
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${FLAB[xi].split(' ')[0]}: ${ctx.parsed.x.toFixed(0)}, ${FLAB[yi].split(' ')[0]}: ${ctx.parsed.y.toFixed(0)} → ${ctx.raw._z.toFixed(1)}°C`
+          }
         }
+      },
+      scales: {
+        x: { min:xr.lo,  max:xr.hi,  title:{display:true,text:FLAB[xi],font:{size:14}} },
+        y: { min:yr2.lo, max:yr2.hi, title:{display:true,text:FLAB[yi],font:{size:14}} }
       }
     }
   });
 
-  const maxV=Math.max(...vals), minV=Math.min(...vals);
-  const sr=document.getElementById('stat-row');
-  sr.innerHTML='';
-  [
-    ['Highest', labels[vals.indexOf(maxV)], `${fmt(maxV)} ${lbl}`],
-    ['Lowest',  labels[vals.indexOf(minV)], `${fmt(minV)} ${lbl}`],
-    ['Range',   '',                          `${fmt(maxV-minV)} ${lbl}`]
-  ].forEach(([l,sub,v])=>{
-    const card=document.createElement('div');
-    card.className='scard';
-    card.innerHTML=`<div class="slabel">${l}</div><div class="sval">${sub||v}</div>${sub?`<div class="ssub">${v}</div>`:''}`;
-    sr.appendChild(card);
+  document.getElementById('leg-rsm').innerHTML =
+    `<div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(24,95,165,.85)"></div>Low: ${mn.toFixed(1)}°C</div>
+     <div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(216,90,48,.85)"></div>High: ${mx.toFixed(1)}°C</div>`;
+}
+
+// ============================================================
+//  RANKING
+// ============================================================
+function updateRanking(){
+  const hi  = HORIZONS.indexOf(horizon);
+  const data = DOE.map(r => ({ run:r, v:TEMPS[r.s][hi] })).sort((a,b)=>b.v-a.v);
+  const best = data[0].v;
+
+  document.getElementById('rank-col-hdr').textContent = `${horizon}yr °C`;
+  document.getElementById('rank-body').innerHTML = data.map((d,i) => {
+    const pct = (d.v/best*100).toFixed(0);
+    const cls = i===0?' class="best"':i===data.length-1?' class="worst"':'';
+    return `<tr${cls}>
+      <td>${i+1}</td><td>S${d.run.s}</td>
+      <td><span class="badge b-blue">${d.run.c}</span></td>
+      <td>${d.run.dist}</td><td>${d.run.angle}</td><td>${d.run.spac}</td><td>${d.run.flow}</td><td>${d.run.nf}</td>
+      <td><b>${d.v.toFixed(1)}</b></td>
+      <td><div class="bar-track" style="display:inline-block;width:60px;vertical-align:middle">
+          <div class="bar-fill" style="width:${pct}%;background:#185FA5"></div></div></td>
+    </tr>`;
+  }).join('');
+
+  if(chartRank) chartRank.destroy();
+  const cols = data.map((_,i) => i===0?'#185FA5':i===data.length-1?'#a32d2d':'#97C459');
+  chartRank = new Chart(document.getElementById('chart-rank'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d=>`S${d.run.s}`),
+      datasets: [{ data:data.map(d=>d.v), backgroundColor:cols, borderWidth:0 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.parsed.y.toFixed(1)}°C`}} },
+      scales: {
+        x: { ticks:{font:{size:14}} },
+        y: { min: Math.min(...data.map(d=>d.v))*0.95, title:{display:true,text:`°C @ ${horizon}yr`,font:{size:14}} }
+      }
+    }
   });
 }
 
-function renderAll(){renderTemp();renderFlow();renderTable();renderBar();}
+// ============================================================
+//  TAB + HORIZON SWITCHING
+// ============================================================
+function setHorizon(h, btn){
+  horizon = h;
+  document.querySelectorAll('#hor-tabs .tab').forEach(t => t.classList.remove('act'));
+  if(btn) btn.classList.add('act');
 
-// ── Control handlers ───────────────────────────────────────────────────────
-function setU(key,val,el,fn){
-  S[key]=val;
-  el.closest('.filter-group').querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  window[fn]();
+  if(Object.keys(models).length > 0){
+    const run = getSliderRun();
+    const p = predict(run, h);
+    document.getElementById('pred-val').textContent  = p.toFixed(1);
+    document.getElementById('pred-unit').textContent = 'Predicted °C at ' + h + ' yr';
+    updateEquationTab();
+    updateSensitivity();
+    renderRSM();
+    updateRanking();
+  }
 }
 
-function setF(type,val,el,fn){
-  filters[type]=val==='all'?'all':(+val||val);
-  el.closest('.filter-group').querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  window[fn]();
+function setMainTab(name, btn){
+  document.querySelectorAll('.main .tc').forEach(t => t.classList.remove('act'));
+  document.getElementById('tab-'+name).classList.add('act');
+  document.querySelectorAll('#main-tabs .tab').forEach(t => t.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+
+  // lazy-render on switch
+  if(name==='decline')     renderAllDecline();
+  if(name==='predict')     renderPredCurve();
+  if(name==='sensitivity') updateSensitivity();
+  if(name==='rsm')         renderRSM();
+  if(name==='energy')      updateEnergy();
 }
 
-function setMs(d,el){
-  currentMs=d;
-  document.querySelectorAll('#ms-filter .pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  renderBar();
+function refreshAll(){
+  updateEnergy();
+  updateSensitivity();
+  renderRSM();
+  const run = getSliderRun();
+  const p = predict(run, horizon);
+  document.getElementById('pred-val').textContent  = p.toFixed(1);
+  document.getElementById('pred-unit').textContent = 'Predicted °C at ' + horizon + ' yr';
 }
 
-function switchTab(name,el){
-  ['temp','flow','table','compare'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+// ============================================================
+//  INIT
+// ============================================================
+function buildDataTable(){
+  const sel = document.getElementById('hl-sel');
+  document.getElementById('data-body').innerHTML = DOE.map(r => {
+    const cx = FKEYS.map(f => (code(r[f],R[f])>=0?'+':'')+code(r[f],R[f]).toFixed(1));
+    const T  = TEMPS[r.s];
+    return `<tr>
+      <td>${r.s}</td>
+      <td><span class="badge b-blue">${r.c}</span></td>
+      <td>${r.dist}</td><td>${r.angle}</td><td>${r.spac}</td><td>${r.flow}</td><td>${r.nf}</td>
+      <td style="color:var(--text3)">${cx[0]}</td><td style="color:var(--text3)">${cx[1]}</td>
+      <td style="color:var(--text3)">${cx[2]}</td><td style="color:var(--text3)">${cx[3]}</td>
+      ${T.map(v=>`<td>${v.toFixed(1)}</td>`).join('')}
+    </tr>`;
+  }).join('');
+  DOE.forEach(r => {
+    const o = document.createElement('option');
+    o.value = r.s;
+    o.textContent = `S${r.s} — ${r.c} (${r.dist}ft, ${r.angle}°)`;
+    sel.appendChild(o);
+    // also populate energy highlight selector
+    const o2 = document.createElement('option');
+    o2.value = r.s;
+    o2.textContent = `S${r.s} — ${r.c}`;
+    document.getElementById('e-hl-sel').appendChild(o2);
+  });
 }
 
-// ── Init ───────────────────────────────────────────────────────────────────
-renderAll();
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',renderAll);
+buildDataTable();
+drawWellDiagram();
+fitAllModels();
+renderPredCurve();
+
+// ── ENERGY FUNCTIONS ────────────────────────────────────────────────────────
+
+function trapz(y, x){
+  let s = 0;
+  for(let i=1;i<x.length;i++) s += 0.5*(y[i-1]+y[i])*(x[i]-x[i-1]);
+  return s;
+}
+
+function calcEnergy(scenario, Tinj){
+  const row  = DOE.find(r => r.s === scenario);
+  const nf   = Math.ceil(3160 / row.spac);
+  const qtot = nf * row.flow;
+  const mdot = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER; // total produced from both P1+P2
+  const Tp   = TEMPS[scenario];
+  const P_MW = Tp.map(t => mdot * CP_WATER * (t - Tinj) / 1e6);
+  const E_J  = trapz(P_MW.map(p=>p*1e6), H_SEC);
+  return { mdot, qtot, nf, P_MW, E_GWh: E_J/3.6e12, E_TJ: E_J/1e12, P_avg: P_MW.reduce((a,b)=>a+b,0)/P_MW.length };
+}
+
+function calcEnergyFromPowers(P_MW_arr){
+  const E_J = trapz(P_MW_arr.map(p=>p*1e6), H_SEC);
+  return { E_GWh: E_J/3.6e12, E_TJ: E_J/1e12 };
+}
+
+function calcPredEnergy(Tinj){
+  if(!models[horizon]) return null;
+  const run  = getSliderRun();
+  const nf   = Math.ceil(3160 / run.spac);
+  const qtot = nf * run.flow;
+  const mdot = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER; // total produced from both P1+P2
+  const P_MW = HORIZONS.map(yr => {
+    const T = predict(run, yr);
+    return T !== null ? mdot * CP_WATER * (T - Tinj) / 1e6 : null;
+  });
+  const valid = P_MW.filter(p=>p!==null);
+  if(valid.length < 2) return null;
+  const E_J  = trapz(P_MW.map(p=>p*1e6), H_SEC);
+  return { mdot, qtot, nf, P_MW, E_GWh: E_J/3.6e12, E_TJ: E_J/1e12, P_avg: valid.reduce((a,b)=>a+b,0)/valid.length };
+}
+
+// (parasitic constants moved to top)
+
+function getParasiticFrac(qtot, override){
+  // Returns fraction 0-1 of YEAR-0 gross power consumed by pumps
+  // override: -1 = auto (flow-based), else fixed fraction from slider (20-40%)
+  if(override >= 20 && override <= 40) return override / 100;
+  const pct = 20 + (qtot - Q_PARASITIC_MIN) / (Q_PARASITIC_MAX - Q_PARASITIC_MIN) * 20;
+  return Math.min(40, Math.max(20, pct)) / 100;
+}
+
+function calcElecNet(P_gross_thermal_arr, qtot, override, orc){
+  // 1. Convert gross thermal → gross electrical
+  const P_elec_gross = P_gross_thermal_arr.map(p => p * orc);
+  // 2. Parasitic (pump work) is fixed MWe set at year-0 electrical output
+  const fp      = getParasiticFrac(qtot, override);
+  const par_MWe = P_elec_gross[0] * fp;   // fixed at t=0, in MWe
+  // 3. Net electrical = gross electrical − fixed parasitic (clipped to 0)
+  return { P_elec_net: P_elec_gross.map(p => Math.max(0, p - par_MWe)),
+           P_elec_gross, par_MWe };
+}
+
+function updateEnergy(){
+  const Tinj = T_INJ;  // fixed: 165°F = 73.89°C
+
+  const rawParasitic = parseFloat(document.getElementById('e-parasitic').value);
+  // ≤20.05 = Auto mode (slider at left = auto), else fixed override
+  const isAuto = (rawParasitic <= 20.05);
+  const parasiticOverride = isAuto ? -1 : rawParasitic;
+  const parasLbl = document.getElementById('e-parasitic-lbl');
+  parasLbl.textContent = isAuto ? 'Auto (flow-based)' : rawParasitic.toFixed(1) + '% (fixed)';
+
+  // ── Predictor panel ────────────────────────────────────────────────────
+  const orc = getOrcEff();
+  document.getElementById('e-orc-lbl').textContent = (orc*100).toFixed(1) + '%';
+
+  const pred = calcPredEnergy(Tinj);
+  if(pred){
+    const run   = getSliderRun();
+    const nf    = Math.ceil(3160 / run.spac);
+    const qtot  = nf * run.flow;
+    const fp = getParasiticFrac(qtot, isAuto ? -1 : parasiticOverride);
+    const { P_elec_net, P_elec_gross: P_eg, par_MWe } = calcElecNet(pred.P_MW, qtot, isAuto ? -1 : parasiticOverride, orc);
+    const E_elec_J   = trapz(P_elec_net.map(p=>p*1e6), H_SEC);
+    const E_elec_GWh = E_elec_J / 3.6e12;
+    const P_elec_avg = P_elec_net.reduce((a,b)=>a+b,0)/P_elec_net.length;
+    const P_eg0      = P_eg[0];  // gross elec at t=0
+
+    document.getElementById('e-pred-metrics').innerHTML = `
+      <div class="mc"><div class="ml">Gross elec at t=0</div><div class="mv" style="font-size:14px">${P_eg0.toFixed(2)}</div><div class="mu">MWe</div></div>
+      <div class="mc"><div class="ml">Parasitic (fixed)</div><div class="mv" style="font-size:14px;color:var(--red)">${par_MWe.toFixed(2)} MWe</div><div class="mu">${(fp*100).toFixed(1)}% of yr-0 elec</div></div>
+      <div class="mc"><div class="ml">Net elec avg</div><div class="mv" style="font-size:14px;color:var(--green)">${P_elec_avg.toFixed(2)}</div><div class="mu">MWe</div></div>
+      <div class="mc"><div class="ml">E_elec 30yr</div><div class="mv" style="font-size:14px;color:var(--green)">${E_elec_GWh.toFixed(1)}</div><div class="mu">GWhe</div></div>
+
+    `;
+
+    // Chart: gross vs net vs nearest Numerical Simulation
+    if(chartPowerPred) chartPowerPred.destroy();
+    // S07 = best scenario (600ft dist, 30ft spac, 1350 bbl/d)
+    const q_s7  = Math.ceil(3160/30)*1350;  // 106 * 1350 = 143,100 bbl/d
+    const {P_elec_net:pen_best} = calcElecNet(POWER_MW[7], q_s7, isAuto?-1:parasiticOverride, orc);
+    const datasets = [
+      { label:`Net electrical — prediction (MWe)`,
+        data: HORIZONS.map((yr,i)=>({x:yr, y:P_elec_net[i]})),
+        borderColor:'#ff6600', borderWidth:3, pointRadius:5, fill:false,
+        tension:0.3, order:0 },
+      {
+        label:'Best simulation — S7 (600ft dist, 30ft spac, 1350 bbl/d)',
+        data: HORIZONS.map((yr,i)=>({x:yr, y:pen_best[i]})),
+        borderColor:'#185FA5', borderWidth:2, pointRadius:3,
+        fill:false, tension:0.3, borderDash:[5,4], order:1
+      }
+    ];
+    chartPowerPred = new Chart(document.getElementById('chart-power-pred'),{
+      type:'line', data:{datasets},
+      options:{ responsive:true, maintainAspectRatio:false, parsing:false,
+        plugins:{ legend:{display:true,position:'top',labels:{font:{size:14},boxWidth:12}} },
+        scales:{
+          x:{ type:'linear', min:0, max:30,
+              title:{display:true,text:'Production time (years)',font:{size:14}},
+              ticks:{stepSize:5,font:{size:14}} },
+          y:{ title:{display:true,text:'Thermal power (MW)',font:{size:14}},
+              ticks:{font:{size:14}} }
+        }}
+    });
+  }
+
+  // ── Energy table (all 25 scenarios) ───────────────────────────────────
+  const rows = DOE.map(r => {
+    const e    = calcEnergy(r.s, T_INJ);
+    const fp   = getParasiticFrac(e.qtot, parasiticOverride);
+    const par_MW_row = e.P_MW[0] * fp;
+    const P_net_arr = e.P_MW.map(p => Math.max(0, p - par_MW_row));
+    const E_net_J   = trapz(P_net_arr.map(p=>p*1e6), H_SEC);
+    const E_net_GWh = E_net_J / 3.6e12;
+    const E_net_TJ  = E_net_J / 1e12;
+    return { ...r, ...e, fp, P_net_avg: P_net_arr.reduce((a,b)=>a+b,0)/P_net_arr.length,
+             E_net_GWh, E_net_TJ };
+  }).sort((a,b) => b.E_net_GWh - a.E_net_GWh);
+
+  document.getElementById('energy-body').innerHTML = rows.map((r,i) => {
+    const orc2 = getOrcEff();
+    const cls = i===0?' class="best"':i===rows.length-1?' class="worst"':'';
+    const {P_elec_net:pen2, par_MWe:pme2} = calcElecNet(r.P_MW, r.qtot, isAuto?-1:parasiticOverride, orc2);
+    const E_elec_J2  = trapz(pen2.map(p=>p*1e6), H_SEC);
+    const E_elec_GWh = E_elec_J2/3.6e12;
+    const P_elec_avg = pen2.reduce((a,b)=>a+b,0)/pen2.length;
+    return `<tr${cls}>
+      <td>${i+1}</td><td>S${r.s}</td>
+      <td><span class="badge b-blue">${r.c}</span></td>
+      <td>${r.dist}</td><td>${r.angle}</td><td>${r.spac}</td><td>${r.flow}</td>
+      <td>${r.nf}</td><td>${r.qtot.toLocaleString()}</td>
+      <td>${r.mdot.toFixed(1)}</td>
+      <td style="color:var(--red);font-weight:600">${pme2.toFixed(2)} MWe</td>
+      <td style="color:var(--green);font-weight:600">${P_elec_avg.toFixed(2)}</td>
+      <td><b>${E_elec_GWh.toFixed(1)}</b></td>
+    </tr>`;
+  }).join('');
+
+  renderPowerCurves();
+}
+
+function renderPowerCurves(){
+  const hlSel   = parseInt(document.getElementById('e-hl-sel').value)||0;
+  const colorBy = document.getElementById('e-color-by').value;
+  const pals = {
+    spac: {30:'#185FA5',90:'#27ae60',150:'#a32d2d'},
+    flow: {1100:'#185FA5',1350:'#27ae60',1600:'#a32d2d'},
+    dist: {300:'#185FA5',450:'#27ae60',600:'#a32d2d'},
+    angle:{60:'#185FA5',120:'#27ae60',180:'#a32d2d'},
+  };
+  const klabs = {
+    spac: {30:'30 ft',90:'90 ft',150:'150 ft'},
+    flow: {1100:'1100 bbl/d',1350:'1350 bbl/d',1600:'1600 bbl/d'},
+    dist: {300:'300 ft',450:'450 ft',600:'600 ft'},
+    angle:{60:'60°',120:'120°',180:'180°'},
+  };
+  const palVals = Object.keys(pals[colorBy]).map(Number);
+  const Tinj = T_INJ;
+
+  const _rawP2 = parseFloat(document.getElementById('e-parasitic').value);
+  const parasiticOverride2 = (_rawP2 <= 20.05) ? -1 : _rawP2;
+  const datasets = DOE.map(run => {
+    const bv = run[colorBy];
+    const nearest = palVals.reduce((a,b)=>Math.abs(b-bv)<Math.abs(a-bv)?b:a);
+    const col  = pals[colorBy][nearest];
+    const isHL = run.s === hlSel;
+    const e    = calcEnergy(run.s, T_INJ);
+    const fp   = getParasiticFrac(e.qtot, parasiticOverride2);
+    const par_MW_pc = e.P_MW[0] * fp;
+    const orc3 = getOrcEff();
+    const {P_elec_net:pen3} = calcElecNet(e.P_MW, e.qtot, _rawP2<=20.05?-1:parasiticOverride2, orc3);
+    return {
+      label:`S${run.s}`,
+      data: HORIZONS.map((yr,i) => ({ x:yr, y:pen3[i] })),
+      borderColor: isHL ? '#ff6600' : col,
+      borderWidth: isHL ? 3 : 1.2,
+      pointRadius: isHL ? 4 : 0,
+      fill:false, tension:0.3, order: isHL?0:1,
+    };
+  });
+
+  if(chartPowerCurves) chartPowerCurves.destroy();
+  chartPowerCurves = new Chart(document.getElementById('chart-power-curves'),{
+    type:'line', data:{datasets},
+    options:{ responsive:true, maintainAspectRatio:false, parsing:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{
+        title:c=>`S${DOE[c[0].datasetIndex].s}`,
+        label:c=>`Year ${c[0].parsed.x}: ${c[0].parsed.y.toFixed(1)} MW`
+      }}},
+      scales:{
+        x:{ type:'linear', min:0, max:30, title:{display:true,text:'Production time (years)',font:{size:14}},
+            ticks:{stepSize:5,font:{size:14}} },
+        y:{ title:{display:true,text:'Net electrical power (MWe)',font:{size:14}}, ticks:{font:{size:14}} }
+      }}
+  });
+
+  const legHTML = Object.entries(pals[colorBy]).map(([k,c])=>
+    `<div style="display:flex;align-items:center;gap:4px">
+       <div style="width:18px;height:2px;background:${c};border-radius:1px;flex-shrink:0"></div>
+       <span>${colorBy}: ${klabs[colorBy][k]}</span>
+     </div>`).join('')+(hlSel?
+    `<div style="display:flex;align-items:center;gap:4px">
+       <div style="width:18px;height:3px;background:#ff6600;border-radius:1px;flex-shrink:0"></div>
+       <span>S${hlSel} highlighted</span></div>`:'');
+  document.getElementById('leg-power-curves').innerHTML = legHTML;
+}
+
+
+// ── TORNADO CHART ──────────────────────────────────────────────────────────
+function renderTornado(){
+  const params = [
+    {key:'spac',  label:'Spacing (ft)',       col:'#27ae60'},
+    {key:'dist',  label:'Distance (ft)',       col:'#185FA5'},
+    {key:'flow',  label:'Flow/frac (bbl/d)',  col:'#f39c12'},
+    {key:'angle', label:'Angle (°)',           col:'#c0392b'},
+  ];
+  // sorted by total swing
+  const datasets = [
+    {
+      label:'Low value impact',
+      data: params.map(p => TORNADO[p.key].delta_lo),
+      backgroundColor: params.map(p => TORNADO[p.key].delta_lo >= 0 ? p.col+'cc' : '#e74c3ccc'),
+      borderWidth: 0,
+    },
+    {
+      label:'High value impact',
+      data: params.map(p => TORNADO[p.key].delta_hi),
+      backgroundColor: params.map(p => TORNADO[p.key].delta_hi >= 0 ? p.col+'cc' : '#e74c3ccc'),
+      borderWidth: 0,
+    }
+  ];
+  if(chartTornado) chartTornado.destroy();
+  chartTornado = new Chart(document.getElementById('chart-tornado'), {
+    type: 'bar',
+    data: { labels: params.map(p=>p.label), datasets },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{font:{size:14},boxWidth:12} },
+        tooltip: { callbacks: { label: c => `${c.parsed.x >= 0 ? '+' : ''}${c.parsed.x.toFixed(0)} GWhe vs baseline (${TORNADO.base} GWhe)` } },
+        annotation: { annotations: { baseline: { type:'line', xMin:0, xMax:0, borderColor:'#333', borderWidth:1.5 } } }
+      },
+      scales: {
+        x: { title:{display:true,text:'ΔNet energy vs baseline (GWhe)',font:{size:14}},
+             ticks:{font:{size:14}, callback:v=>(v>=0?'+':'')+v} },
+        y: { ticks:{font:{size:14}} }
+      }
+    }
+  });
+}
+
+// ── CONTOUR HEATMAP ────────────────────────────────────────────────────────
+function renderContour(){
+  const Eflat = CONTOUR_E.flat();
+  const Emin = Math.min(...Eflat), Emax = Math.max(...Eflat);
+
+  function eColor(e){
+    const t = (e - Emin) / (Emax - Emin);
+    // blue → green → yellow → red
+    const stops = [[41,128,185],[39,174,96],[241,196,15],[192,57,43]];
+    const i = Math.min(Math.floor(t*3),2), f = t*3-i;
+    const [r1,g1,b1]=stops[i],[r2,g2,b2]=stops[i+1];
+    return `rgba(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)},0.85)`;
+  }
+
+  // Build bubble dataset: x=spacing, y=distance, r=fixed, color=energy
+  const pts = [];
+  CONTOUR_DIST.forEach((d,di) => {
+    CONTOUR_SPAC.forEach((s,si) => {
+      pts.push({x: s, y: d, r: 7, _e: CONTOUR_E[di][si]});
+    });
+  });
+
+  if(chartContour) chartContour.destroy();
+  chartContour = new Chart(document.getElementById('chart-contour'), {
+    type: 'bubble',
+    data: { datasets: [{ data: pts, backgroundColor: pts.map(p=>eColor(p._e)), borderWidth:0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display:false },
+        tooltip: { callbacks: { label: c => `Spac=${c.parsed.x.toFixed(0)}ft, Dist=${c.parsed.y.toFixed(0)}ft → ${c.raw._e.toFixed(0)} GWhe` } }
+      },
+      scales: {
+        x: { min:25, max:155, title:{display:true,text:'Fracture spacing (ft)',font:{size:14}},
+             ticks:{font:{size:14}} },
+        y: { min:290, max:610, title:{display:true,text:'Well distance (ft)',font:{size:14}},
+             ticks:{font:{size:14}} }
+      }
+    }
+  });
+
+  document.getElementById('leg-contour').innerHTML =
+    `<div style="display:flex;align-items:center;gap:4px"><div style="width:14px;height:14px;border-radius:3px;background:rgba(41,128,185,.85)"></div>Low: ${Emin.toFixed(0)} GWhe</div>
+     <div style="display:flex;align-items:center;gap:4px"><div style="width:14px;height:14px;border-radius:3px;background:rgba(192,57,43,.85)"></div>High: ${Emax.toFixed(0)} GWhe</div>
+     <span style="font-size:10px;color:var(--text3)">Angle & flow at mid-point · optimal region: top-left (large dist, small spac)</span>`;
+}
+
+// ── MONTE CARLO HISTOGRAM ──────────────────────────────────────────────────
+function renderMcHist(){
+  // Stats row
+  document.getElementById('mc-stats-row').innerHTML = [
+    {l:'P5',  v:MC_STATS.p5},
+    {l:'P25', v:MC_STATS.p25},
+    {l:'P50 (median)', v:MC_STATS.p50},
+    {l:'P75', v:MC_STATS.p75},
+    {l:'P95', v:MC_STATS.p95},
+  ].map(s=>`<div class="mc"><div class="ml">${s.l}</div><div class="mv" style="font-size:15px">${s.v.toFixed(0)}</div><div class="mu">GWhe</div></div>`).join('');
+
+  if(chartMcHist) chartMcHist.destroy();
+  chartMcHist = new Chart(document.getElementById('chart-mc-hist'), {
+    type: 'bar',
+    data: {
+      labels: MC_HIST.map(b=>b.x),
+      datasets: [{
+        label:'Configurations',
+        data: MC_HIST.map(b=>b.y),
+        backgroundColor: MC_HIST.map(b=>{
+          const t=(b.x-MC_STATS.min)/(MC_STATS.max-MC_STATS.min);
+          const stops=[[41,128,185],[39,174,96],[241,196,15],[192,57,43]];
+          const i=Math.min(Math.floor(t*3),2),f=t*3-i;
+          const [r1,g1,b1]=stops[i],[r2,g2,b2]=stops[i+1];
+          return `rgba(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)},0.8)`;
+        }),
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display:false },
+        tooltip: { callbacks: { label: c=>`${c.parsed.y} configurations around ${c.parsed.x.toFixed(0)} GWhe` } }
+      },
+      scales: {
+        x: { title:{display:true,text:'30yr net electrical energy (GWhe)',font:{size:14}},
+             ticks:{font:{size:14}, maxRotation:45,
+                    callback:(v,i)=>i%3===0?MC_HIST[i]?.x.toFixed(0):''} },
+        y: { title:{display:true,text:'Number of configurations',font:{size:14}},
+             ticks:{font:{size:14}} }
+      }
+    }
+  });
+}
+
 </script>
 </body>
 </html>
