@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EGSiml</title>
+<title>EGSim</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
@@ -21,16 +21,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* HEADER */
 .hdr{background:var(--bg);border-bottom:.5px solid var(--border2);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.hdr h1{font-size:15px;font-weight:600}
-.hdr p{font-size:10px;color:var(--text3);margin-top:1px}
-.pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.hdr h1{font-size:32px;font-weight:800;letter-spacing:-0.5px}
+.hdr p{font-size:12px;color:var(--text3);margin-top:2px}
+.pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
 .pill-blue{background:var(--blue-bg);color:var(--blue-t)}
 .pill-green{background:var(--green-bg);color:var(--green-t)}
 
 /* LAYOUT */
 .layout{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 46px);overflow:hidden}
 .side{background:var(--bg);border-right:.5px solid var(--border2);overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
-.main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:780px}
+.main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:1200px}
 
 /* PANELS */
 .panel{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:10px 12px}
@@ -38,7 +38,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* TABS */
 .tabs{display:flex;gap:2px;background:var(--bg2);border-radius:var(--r);padding:2px}
-.tab{flex:1;text-align:center;padding:4px 4px;font-size:11px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
+.tab{flex:1;text-align:center;padding:5px 6px;font-size:13px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
 .tab.act{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .tc{display:none}.tc.act{display:block}
 
@@ -59,9 +59,9 @@ tbody tr.worst td{background:var(--red-bg);color:var(--red)}
 
 /* SLIDERS */
 .srow{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:6px;margin-bottom:7px}
-.srow label{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow label{font-size:14px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .srow input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;min-width:0}
-.srow .sv{font-size:13px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
+.srow .sv{font-size:14px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
 
 /* PREDICT BOX */
 .pout{background:var(--blue-bg);border-radius:var(--r);padding:10px;text-align:center;margin-top:6px}
@@ -82,14 +82,14 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 .b-blue{background:var(--blue-bg);color:var(--blue-t)}
 .b-green{background:var(--green-bg);color:var(--green-t)}
 .b-amber{background:var(--amber-bg);color:var(--amber)}
-.cw{position:relative;width:100%;max-width:680px}
+.cw{position:relative;width:100%;max-width:860px}
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--text3);align-items:center}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div><h1>EGSim</h1><p>25 simulation runs · 8 time horizons (0–30 yr) · Live well diagram · Decline curve</p></div>
+  <div><h1>EGSim</h1><p>Surrogate-Based Digital Twin for Subsurface EGS Thermal &amp; Energy Prediction</p></div>
   <span class="pill pill-blue">Box-Behnken</span>
   <span class="pill pill-green">Simulation Data Loaded</span>
 </div>
@@ -163,7 +163,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <!-- Well diagram (compact) -->
   <div class="panel">
     <div class="ptitle">Well geometry</div>
-    <svg id="well-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block"></svg>
+    <svg id="well-svg" viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block"></svg>
     <div id="cfg-label" style="font-size:9.5px;color:var(--text3);text-align:center;margin-top:4px;line-height:1.5"></div>
   </div>
 
@@ -214,7 +214,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           </select>
         </label>
       </div>
-      <div class="cw" style="height:320px">
+      <div class="cw" style="height:380px">
         <canvas id="chart-decline"></canvas>
       </div>
       <div class="leg" id="leg-decline"></div>
@@ -225,7 +225,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <div id="tab-predict" class="tc act">
     <div class="panel">
       <div class="ptitle">Surrogate-predicted decline curve vs. 3 nearest Numerical Simulation scenarios</div>
-      <div class="cw" style="height:320px">
+      <div class="cw" style="height:380px">
         <canvas id="chart-pred"></canvas>
       </div>
       <div class="leg" id="leg-pred"></div>
@@ -274,7 +274,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
       </div>
       <div id="energy-sobol-bars"></div>
       <div style="margin-top:12px">
-        <div class="cw" style="height:340px"><canvas id="chart-energy-sobol"></canvas></div>
+        <div class="cw" style="height:400px"><canvas id="chart-energy-sobol"></canvas></div>
       </div>
     </div>
 
@@ -282,14 +282,14 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     <div class="panel" style="margin-bottom:10px">
       <div class="ptitle">Tornado chart — one-at-a-time impact on 30yr net energy (GWhe)</div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Each bar shows change from baseline (1,066 GWhe) when a single parameter moves from mid to its low/high value, all others fixed at mid.</div>
-      <div class="cw" style="height:320px"><canvas id="chart-tornado"></canvas></div>
+      <div class="cw" style="height:380px"><canvas id="chart-tornado"></canvas></div>
     </div>
 
     <!-- Contour heatmap -->
     <div class="panel" style="margin-bottom:10px">
       <div class="ptitle">Spacing × Distance interaction — net energy heatmap (GWhe)</div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Angle and flow held at mid-point. Color shows 30yr net electrical energy (GWhe). Reveals the coupled optimum.</div>
-      <div class="cw" style="height:320px"><canvas id="chart-contour"></canvas></div>
+      <div class="cw" style="height:380px"><canvas id="chart-contour"></canvas></div>
       <div class="leg" id="leg-contour"></div>
     </div>
 
@@ -297,7 +297,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     <div class="panel" style="margin-bottom:10px">
       <div class="ptitle">Monte Carlo distribution — 30yr net energy across 20,000 random configurations</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px" id="mc-stats-row"></div>
-      <div class="cw" style="height:340px"><canvas id="chart-mc-hist"></canvas></div>
+      <div class="cw" style="height:400px"><canvas id="chart-mc-hist"></canvas></div>
     </div>
 
     <!-- RSM coefficients (collapsed detail) -->
@@ -321,7 +321,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
         <label style="font-size:11px;color:var(--text2)">Y axis: <select id="rsm-y" onchange="renderRSM()" style="margin-left:4px"><option value="0">Distance</option><option value="1" selected>Angle</option><option value="2">Spacing</option><option value="3">Flow</option></select></label>
         <span style="font-size:10px;color:var(--text3)">(other factors held at slider values)</span>
       </div>
-      <div class="cw" style="height:320px"><canvas id="chart-rsm"></canvas></div>
+      <div class="cw" style="height:380px"><canvas id="chart-rsm"></canvas></div>
       <div class="leg" id="leg-rsm"></div>
     </div>
   </div>
@@ -332,7 +332,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     <!-- Controls row -->
     <div class="panel" style="margin-bottom:10px">
       <div class="ptitle">Calculation parameters</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
+      <div style="display:grid;grid-template-columns:420px 1fr;gap:60px;align-items:start">
 
         <!-- Left: parasitic slider only, T_inj fixed -->
         <div>
@@ -363,8 +363,8 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           </div>
         </div>
 
-        <!-- Right: formula box -->
-        <div style="background:var(--bg2);border-radius:var(--r);padding:9px 11px;font-size:10.5px;line-height:1.9;color:var(--text2)">
+        <!-- Formula box (full width) -->
+        <div style="background:var(--bg2);border-radius:var(--r);padding:8px 10px;font-size:10px;line-height:1.7;color:var(--text2);border-left:3px solid var(--blue)">
           <b>Gross thermal power:</b><br>
           &nbsp; Q̇<sub>gross</sub>(t) = ṁ × Cₚ × (T<sub>prod</sub> − T<sub>inj</sub>)<br>
           <b>Parasitic load (pump work):</b><br>
@@ -386,7 +386,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     <div class="panel" style="margin-bottom:10px">
       <div class="ptitle">Predicted energy — current slider configuration</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px" id="e-pred-metrics"></div>
-      <div class="cw" style="height:320px">
+      <div class="cw" style="height:380px">
         <canvas id="chart-power-pred" role="img" aria-label="Predicted thermal power curve"></canvas>
       </div>
     </div>
@@ -428,7 +428,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           </select>
         </label>
       </div>
-      <div class="cw" style="height:320px">
+      <div class="cw" style="height:380px">
         <canvas id="chart-power-curves" role="img" aria-label="Thermal power decline curves for all 25 scenarios"></canvas>
       </div>
       <div class="leg" id="leg-power-curves"></div>
@@ -818,51 +818,69 @@ function drawWellDiagram(){
   const spac  = parseFloat(document.getElementById('sl-spac').value);
   const flow  = parseFloat(document.getElementById('sl-flow').value);
 
-  const W=220, H=130;
-  const cx=110, cy=95;     // injector centre
-  const scale = 38;        // px per 300 ft step
+  // Larger viewBox for more room
+  const W=260, H=160;
+  const cx=130, cy=110;
+  const scale = 42;
   const D = dist/300 * scale;
 
   let inner = '';
 
-  // markers
+  // Double-headed arrow markers (both ends)
   inner += `<defs>
-    <marker id="mG" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L6,3z" fill="#2980b9"/>
+    <marker id="mS" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <path d="M7,0 L7,7 L0,3.5z" fill="#2980b9"/>
     </marker>
-    <marker id="mR" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L6,3z" fill="#c0392b"/>
+    <marker id="mSrev" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">
+      <path d="M7,0 L7,7 L0,3.5z" fill="#2980b9"/>
+    </marker>
+    <marker id="mA" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <path d="M7,0 L7,7 L0,3.5z" fill="#c0392b"/>
+    </marker>
+    <marker id="mArev" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">
+      <path d="M7,0 L7,7 L0,3.5z" fill="#c0392b"/>
     </marker>
   </defs>`;
 
-  function circ(x,y,topLabel,botLabel,col,r){
-    r = r||16;
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${col}" stroke-width="2"/>
-            <text x="${x}" y="${y-2}" text-anchor="middle" font-size="9" fill="${col}" font-weight="700">${topLabel}</text>
-            <text x="${x}" y="${y+9}" text-anchor="middle" font-size="9" fill="${col}">${botLabel}</text>`;
+  // Double-headed dashed line helper
+  function dline(x1,y1,x2,y2,col,mfwd,mrev){
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+      stroke="${col}" stroke-width="1.8" stroke-dasharray="5,3"
+      marker-start="url(#${mrev})" marker-end="url(#${mfwd})"/>`;
   }
-  function line(x1,y1,x2,y2,col,dash,marker){
-    const d = dash ? 'stroke-dasharray="5,3"' : '';
-    const mk = marker ? `marker-end="url(#${marker})"` : '';
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="1.6" ${d} ${mk}/>`;
+
+  function circ(x,y,label,sub,col){
+    const r=15;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="white" stroke="${col}" stroke-width="2"/>
+            <text x="${x}" y="${y-1}" text-anchor="middle" dominant-baseline="middle"
+              font-size="10" fill="${col}" font-weight="700">${label}</text>
+            <text x="${x}" y="${y+10}" text-anchor="middle"
+              font-size="9" fill="${col}">${sub}</text>`;
   }
-  function txt(x,y,s,col,anchor){
-    return `<text x="${x}" y="${y}" text-anchor="${anchor||'middle'}" font-size="8" fill="${col||'#555'}">${s}</text>`;
+
+  // Background label for distance text to prevent overlap
+  function ltxt(x,y,s,col){
+    const len = s.length*4.5;
+    return `<rect x="${x-len/2}" y="${y-8}" width="${len}" height="11" fill="white" fill-opacity="0.85" rx="2"/>
+            <text x="${x}" y="${y}" text-anchor="middle" font-size="8" fill="${col||'#555'}">${s}</text>`;
+  }
+
+  function atxt(x,y,s,col){
+    return `<rect x="${x-14}" y="${y-8}" width="28" height="12" fill="white" fill-opacity="0.9" rx="2"/>
+            <text x="${x}" y="${y}" text-anchor="middle" font-size="9" font-weight="700" fill="${col||'#c0392b'}">${s}</text>`;
   }
 
   if(angle === 180){
-    // Collinear: P1 ← I1 → P2
     const p1x=cx-D, p2x=cx+D, iy=cy;
-    inner += line(cx-6, iy, p1x+16, iy, '#c0392b', true, 'mR');
-    inner += line(cx+6, iy, p2x-16, iy, '#c0392b', true, 'mR');
+    inner += dline(p1x+15, iy, cx-6,   iy, '#c0392b','mA','mArev');
+    inner += dline(cx+6,   iy, p2x-15, iy, '#c0392b','mA','mArev');
     inner += circ(p1x, iy, 'P','1','#27ae60');
     inner += circ(p2x, iy, 'P','2','#27ae60');
     inner += circ(cx,  iy, 'I','1','#c0392b');
-    inner += txt((p1x+cx)/2, iy-20, dist+' ft', '#555');
-    inner += txt((p2x+cx)/2, iy-20, dist+' ft', '#555');
-    inner += txt(cx, iy+28, '180°', '#c0392b');
+    inner += ltxt((p1x+cx)/2, iy-18, Math.round(dist)+' ft', '#555');
+    inner += ltxt((p2x+cx)/2, iy-18, Math.round(dist)+' ft', '#555');
+    inner += atxt(cx, iy+30, '180°', '#c0392b');
   } else {
-    // V shape
     const halfRad = (angle/2)*Math.PI/180;
     const p1x = cx - Math.sin(halfRad)*D;
     const p1y = cy - Math.cos(halfRad)*D;
@@ -870,17 +888,19 @@ function drawWellDiagram(){
     const p2y = cy - Math.cos(halfRad)*D;
     const p2p = Math.round(2*dist*Math.sin(halfRad));
 
-    // P1—P2 solid blue
-    inner += line(p1x+16, p1y, p2x-16, p2y, '#2980b9', false, 'mG');
-    inner += txt(cx, p1y-10, p2p+' ft', '#2980b9');
-    // I to producers dashed red
-    inner += line(cx, cy-16, p1x+8, p1y+10, '#c0392b', true, 'mR');
-    inner += line(cx, cy-16, p2x-8, p2y+10, '#c0392b', true, 'mR');
-    // arm distances
-    inner += txt((cx+p1x)/2-12, (cy+p1y)/2, dist+' ft', '#777');
-    inner += txt((cx+p2x)/2+12, (cy+p2y)/2, dist+' ft', '#777');
+    // P1—P2 double-headed dashed blue
+    inner += dline(p1x+15, p1y, p2x-15, p2y, '#2980b9','mS','mSrev');
+    inner += ltxt(cx, p1y-12, p2p+' ft', '#2980b9');
+    // I to P1 and P2 double-headed dashed red
+    inner += dline(cx, cy-15, p1x+10, p1y+10, '#c0392b','mA','mArev');
+    inner += dline(cx, cy-15, p2x-10, p2y+10, '#c0392b','mA','mArev');
+    // arm distance labels with white background
+    const mx1 = (cx+p1x)/2, my1 = (cy+p1y)/2;
+    const mx2 = (cx+p2x)/2, my2 = (cy+p2y)/2;
+    inner += ltxt(mx1-14, my1, Math.round(dist)+' ft', '#555');
+    inner += ltxt(mx2+14, my2, Math.round(dist)+' ft', '#555');
     // angle label
-    inner += txt(cx, cy+12, angle+'°', '#c0392b');
+    inner += atxt(cx, cy+14, Math.round(angle)+'°', '#c0392b');
     // nodes
     inner += circ(p1x, p1y, 'P','1','#27ae60');
     inner += circ(p2x, p2y, 'P','2','#27ae60');
@@ -890,8 +910,8 @@ function drawWellDiagram(){
   // fracture count: ceil(3160 / spacing)
   const nFracs = Math.ceil(3160 / spac);
   document.getElementById('well-svg').innerHTML =
-    `<rect width="${W}" height="${H}" fill="#f5f6f8" rx="8"/>
-     <text x="8" y="12" font-size="8" fill="#aaa">Injector (red) · Producers (green)</text>
+    `<rect width="${W}" height="${H}" fill="#f8f9fa" rx="8"/>
+     <text x="10" y="14" font-size="9" fill="#aaa">Injector (red) · Producers (green)</text>
      ${inner}`;
   document.getElementById('cfg-label').innerHTML =
     `Dist: <b>${dist} ft</b> · Angle: <b>${angle}°</b><br>Spacing: <b>${spac} ft</b> (~${nFracs} fracs) · Flow: <b>${flow} bbl/d</b>`;
@@ -955,7 +975,7 @@ function renderAllDecline(){
       scales: {
         x: {
           type: 'linear',
-          min: 0.5,
+          min: 0,
           max: 30,
           title: { display: true, text: 'Production time (years)', font: { size: 11 } },
           ticks: { stepSize: 5, font: { size: 10 } },
@@ -1041,7 +1061,7 @@ function renderPredCurve(){
       scales: {
         x: {
           type: 'linear',
-          min: 0.5,
+          min: 0,
           max: 30,
           title: { display: true, text: 'Production time (years)', font: { size: 11 } },
           ticks: { stepSize: 5, font: { size: 10 } },
@@ -1109,9 +1129,9 @@ function updateEquationTab(){
       { label:'1:1',  data:[{x:mn,y:mn},{x:mx,y:mx}], type:'line', borderColor:'#ccc', borderDash:[4,4], pointRadius:0, fill:false }
     ]},
     options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top', labels:{font:{size:14}} } },
-      scales:{ x:{min:mn,max:mx,title:{display:true,text:'Predicted (°C)',font:{size:14}}},
-               y:{min:mn,max:mx,title:{display:true,text:'Numerical Simulation actual (°C)',font:{size:14}}} } }
+      plugins:{ legend:{ position:'top', labels:{font:{size:15}} } },
+      scales:{ x:{min:mn,max:mx,title:{display:true,text:'Predicted (°C)',font:{size:15}}},
+               y:{min:mn,max:mx,title:{display:true,text:'Numerical Simulation actual (°C)',font:{size:15}}} } }
   });
 }
 
@@ -1180,14 +1200,14 @@ function renderEnergySobol(){
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position:'top', labels:{ font:{size:14}, boxWidth:12 } },
+        legend: { position:'top', labels:{ font:{size:15}, boxWidth:12 } },
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y.toFixed(1)}%` } }
       },
       scales: {
-        x: { ticks:{font:{size:14}} },
+        x: { ticks:{font:{size:15}} },
         y: { min:0, max:75,
-             title:{ display:true, text:'Sensitivity index (%)', font:{size:14} },
-             ticks:{ font:{size:14}, callback: v=>v+'%' } }
+             title:{ display:true, text:'Sensitivity index (%)', font:{size:15} },
+             ticks:{ font:{size:15}, callback: v=>v+'%' } }
       }
     }
   });
@@ -1287,8 +1307,8 @@ function renderRSM(){
         }
       },
       scales: {
-        x: { min:xr.lo,  max:xr.hi,  title:{display:true,text:FLAB[xi],font:{size:14}} },
-        y: { min:yr2.lo, max:yr2.hi, title:{display:true,text:FLAB[yi],font:{size:14}} }
+        x: { min:xr.lo,  max:xr.hi,  title:{display:true,text:FLAB[xi],font:{size:15}} },
+        y: { min:yr2.lo, max:yr2.hi, title:{display:true,text:FLAB[yi],font:{size:15}} }
       }
     }
   });
@@ -1332,8 +1352,8 @@ function updateRanking(){
       responsive:true, maintainAspectRatio:false,
       plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.parsed.y.toFixed(1)}°C`}} },
       scales: {
-        x: { ticks:{font:{size:14}} },
-        y: { min: Math.min(...data.map(d=>d.v))*0.95, title:{display:true,text:`°C @ ${horizon}yr`,font:{size:14}} }
+        x: { ticks:{font:{size:15}} },
+        y: { min: Math.min(...data.map(d=>d.v))*0.95, title:{display:true,text:`°C @ ${horizon}yr`,font:{size:15}} }
       }
     }
   });
@@ -1515,17 +1535,17 @@ function updateEnergy(){
 
     // Chart: gross vs net vs nearest Numerical Simulation
     if(chartPowerPred) chartPowerPred.destroy();
-    // S07 = best scenario (600ft dist, 30ft spac, 1350 bbl/d)
-    const q_s7  = Math.ceil(3160/30)*1350;  // 106 * 1350 = 143,100 bbl/d
-    const {P_elec_net:pen_best} = calcElecNet(POWER_MW[7], q_s7, isAuto?-1:parasiticOverride, orc);
+    // MC optimal: dist=600ft, spac=30ft, flow=1600 bbl/d — scale by current ORC
+    const orcScale = orc / 0.12;
+    const scaledBestNet = BEST_P_NET.map(p => Math.max(0, p * orcScale));
     const datasets = [
-      { label:`Net electrical — prediction (MWe)`,
+      { label:'Net electrical — prediction (MWe)',
         data: HORIZONS.map((yr,i)=>({x:yr, y:P_elec_net[i]})),
         borderColor:'#ff6600', borderWidth:3, pointRadius:5, fill:false,
         tension:0.3, order:0 },
       {
-        label:'Best simulation — S7 (600ft dist, 30ft spac, 1350 bbl/d)',
-        data: HORIZONS.map((yr,i)=>({x:yr, y:pen_best[i]})),
+        label:'MC optimal (600ft, 30ft spac, 1600 bbl/d)',
+        data: HORIZONS.map((yr,i)=>({x:yr, y:scaledBestNet[i]})),
         borderColor:'#185FA5', borderWidth:2, pointRadius:3,
         fill:false, tension:0.3, borderDash:[5,4], order:1
       }
@@ -1533,13 +1553,13 @@ function updateEnergy(){
     chartPowerPred = new Chart(document.getElementById('chart-power-pred'),{
       type:'line', data:{datasets},
       options:{ responsive:true, maintainAspectRatio:false, parsing:false,
-        plugins:{ legend:{display:true,position:'top',labels:{font:{size:14},boxWidth:12}} },
+        plugins:{ legend:{display:true,position:'top',labels:{font:{size:15},boxWidth:12}} },
         scales:{
           x:{ type:'linear', min:0, max:30,
-              title:{display:true,text:'Production time (years)',font:{size:14}},
-              ticks:{stepSize:5,font:{size:14}} },
-          y:{ title:{display:true,text:'Thermal power (MW)',font:{size:14}},
-              ticks:{font:{size:14}} }
+              title:{display:true,text:'Production time (years)',font:{size:15}},
+              ticks:{stepSize:5,font:{size:15}} },
+          y:{ title:{display:true,text:'Thermal power (MW)',font:{size:15}},
+              ticks:{font:{size:15}} }
         }}
     });
   }
@@ -1628,9 +1648,9 @@ function renderPowerCurves(){
         label:c=>`Year ${c[0].parsed.x}: ${c[0].parsed.y.toFixed(1)} MW`
       }}},
       scales:{
-        x:{ type:'linear', min:0, max:30, title:{display:true,text:'Production time (years)',font:{size:14}},
-            ticks:{stepSize:5,font:{size:14}} },
-        y:{ title:{display:true,text:'Net electrical power (MWe)',font:{size:14}}, ticks:{font:{size:14}} }
+        x:{ type:'linear', min:0, max:30, title:{display:true,text:'Production time (years)',font:{size:15}},
+            ticks:{stepSize:5,font:{size:15}} },
+        y:{ title:{display:true,text:'Net electrical power (MWe)',font:{size:15}}, ticks:{font:{size:15}} }
       }}
   });
 
@@ -1677,14 +1697,14 @@ function renderTornado(){
       indexAxis: 'y',
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position:'top', labels:{font:{size:14},boxWidth:12} },
+        legend: { position:'top', labels:{font:{size:15},boxWidth:12} },
         tooltip: { callbacks: { label: c => `${c.parsed.x >= 0 ? '+' : ''}${c.parsed.x.toFixed(0)} GWhe vs baseline (${TORNADO.base} GWhe)` } },
         annotation: { annotations: { baseline: { type:'line', xMin:0, xMax:0, borderColor:'#333', borderWidth:1.5 } } }
       },
       scales: {
-        x: { title:{display:true,text:'ΔNet energy vs baseline (GWhe)',font:{size:14}},
-             ticks:{font:{size:14}, callback:v=>(v>=0?'+':'')+v} },
-        y: { ticks:{font:{size:14}} }
+        x: { title:{display:true,text:'ΔNet energy vs baseline (GWhe)',font:{size:15}},
+             ticks:{font:{size:15}, callback:v=>(v>=0?'+':'')+v} },
+        y: { ticks:{font:{size:15}} }
       }
     }
   });
@@ -1723,10 +1743,10 @@ function renderContour(){
         tooltip: { callbacks: { label: c => `Spac=${c.parsed.x.toFixed(0)}ft, Dist=${c.parsed.y.toFixed(0)}ft → ${c.raw._e.toFixed(0)} GWhe` } }
       },
       scales: {
-        x: { min:25, max:155, title:{display:true,text:'Fracture spacing (ft)',font:{size:14}},
-             ticks:{font:{size:14}} },
-        y: { min:290, max:610, title:{display:true,text:'Well distance (ft)',font:{size:14}},
-             ticks:{font:{size:14}} }
+        x: { min:25, max:155, title:{display:true,text:'Fracture spacing (ft)',font:{size:15}},
+             ticks:{font:{size:15}} },
+        y: { min:290, max:610, title:{display:true,text:'Well distance (ft)',font:{size:15}},
+             ticks:{font:{size:15}} }
       }
     }
   });
@@ -1773,11 +1793,11 @@ function renderMcHist(){
         tooltip: { callbacks: { label: c=>`${c.parsed.y} configurations around ${c.parsed.x.toFixed(0)} GWhe` } }
       },
       scales: {
-        x: { title:{display:true,text:'30yr net electrical energy (GWhe)',font:{size:14}},
-             ticks:{font:{size:14}, maxRotation:45,
+        x: { title:{display:true,text:'30yr net electrical energy (GWhe)',font:{size:15}},
+             ticks:{font:{size:15}, maxRotation:45,
                     callback:(v,i)=>i%3===0?MC_HIST[i]?.x.toFixed(0):''} },
-        y: { title:{display:true,text:'Number of configurations',font:{size:14}},
-             ticks:{font:{size:14}} }
+        y: { title:{display:true,text:'Number of configurations',font:{size:15}},
+             ticks:{font:{size:15}} }
       }
     }
   });
