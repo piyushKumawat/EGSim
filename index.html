@@ -90,8 +90,6 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 
 <div class="hdr">
   <div><h1>EGSim</h1><p>Surrogate-Based Digital Twin for Subsurface EGS Thermal &amp; Energy Prediction</p></div>
-  <span class="pill pill-blue">Box-Behnken</span>
-  <span class="pill pill-green">Simulation Data Loaded</span>
 </div>
 
 <div class="layout">
@@ -101,7 +99,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 
   <!-- Horizon selector -->
   <div class="panel">
-    <div class="ptitle">Production horizon (years) — 0 = first month</div>
+    <div class="ptitle">Production horizon (years)</div>
     <div class="tabs" id="hor-tabs">
       <button class="tab act" onclick="setHorizon(0,this)">0</button>
       <button class="tab" onclick="setHorizon(1,this)">1</button>
@@ -152,6 +150,14 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
         <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-ls">89.4</div>
         <div style="font-size:10px;color:var(--green-t);opacity:.8">gal/min</div>
         <div style="font-size:12px;font-weight:700;color:var(--green-t);text-align:right" id="lbl-q-galmin">8,925</div>
+      </div>
+    </div>
+    <!-- Temperature unit toggle -->
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:6px">
+      <span style="font-size:12px;color:var(--text2);align-self:center">Display in:</span>
+      <div class="tabs" style="background:var(--bg2);border:.5px solid var(--border);display:inline-flex">
+        <button class="tab act" id="btn-unit-c" onclick="setTempUnit('C',this)" style="padding:3px 12px;font-size:12px">°C</button>
+        <button class="tab"     id="btn-unit-f" onclick="setTempUnit('F',this)" style="padding:3px 12px;font-size:12px">°F</button>
       </div>
     </div>
     <div class="pout">
@@ -341,7 +347,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
             <span style="font-size:13px;font-weight:700;color:var(--blue-t)">165°F &nbsp;=&nbsp; 73.89°C &nbsp;<span style="font-size:10px;font-weight:400">(fixed)</span></span>
           </div>
           <div class="srow" style="margin-bottom:4px">
-            <label style="min-width:170px">Parasitic load override</label>
+            <label style="min-width:170px">Parasitic Load</label>
             <input type="range" id="e-parasitic" min="20" max="40" step="0.1" value="20" oninput="updateEnergy()">
             <span class="sv" id="e-parasitic-lbl" style="min-width:100px">Auto</span>
           </div>
@@ -370,10 +376,10 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           <b>Parasitic load (pump work):</b><br>
           &nbsp; f<sub>p</sub> = 20–40% (linear with Q<sub>total</sub>)<br>
           &nbsp; Par<sub>MW</sub> = Q̇<sub>gross</sub>(t=0) × f<sub>p</sub> &nbsp;<b>(fixed for project life)</b><br>
-          <b>Gross electrical:</b><br>
-          &nbsp; P<sub>elec,gross</sub>(t) = Q̇<sub>gross</sub>(t) × η<sub>ORC</sub><br>
           <b>Parasitic (fixed MWe at t=0):</b><br>
           &nbsp; Par<sub>MWe</sub> = P<sub>elec,gross</sub>(t=0) × f<sub>p</sub><br>
+          <b>Gross electrical:</b><br>
+          &nbsp; P<sub>elec,gross</sub>(t) = Q̇<sub>gross</sub>(t) × η<sub>ORC</sub><br>
           <b>Net electrical:</b><br>
           &nbsp; P<sub>elec,net</sub>(t) = max(0, P<sub>elec,gross</sub>(t) − Par<sub>MWe</sub>)<br>
           <b>Cumulative electrical energy:</b><br>
@@ -543,6 +549,20 @@ const T_INJ           = 73.89;   // fixed injection temp: 165°F = 73.89°C
 const Q_PARASITIC_MIN = 24200;   // bbl/d → 20% parasitic
 const Q_PARASITIC_MAX = 169600;  // bbl/d → 40% parasitic
 function getTinj(){ return T_INJ; }
+
+// Temperature unit toggle
+let tempUnit = 'C';
+function setTempUnit(unit, btn){
+  tempUnit = unit;
+  document.querySelectorAll('#btn-unit-c,#btn-unit-f').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+  sliderChanged();
+  renderAllDecline();
+  renderPredCurve();
+}
+function toDisplay(c){ return tempUnit === 'F' ? +(c * 9/5 + 32).toFixed(1) : +c.toFixed(1); }
+function unitLabel(){ return tempUnit === 'F' ? '°F' : '°C'; }
+
 function getOrcEff(){ return parseFloat(document.getElementById('e-orc').value) / 100; }
 
 // ── Energy production data ─────────────────────────────────────────────────
@@ -785,8 +805,8 @@ function sliderChanged(){
   const run = getSliderRun();
   if(models[horizon]){
     const p = predict(run, horizon);
-    document.getElementById('pred-val').textContent  = p.toFixed(1);
-    document.getElementById('pred-unit').textContent = 'Predicted °C at ' + horizon + ' yr';
+    document.getElementById('pred-val').textContent  = toDisplay(p).toFixed(1);
+    document.getElementById('pred-unit').textContent = 'Predicted ' + unitLabel() + ' at ' + horizon + ' yr';
   }
 
   drawWellDiagram();
@@ -945,7 +965,7 @@ function renderAllDecline(){
     const isHL  = (run.s === hlSel);
     return {
       label: `S${run.s}`,
-      data: TS[run.s].map(p => ({ x: p[0], y: p[1] })),
+      data: TS[run.s].map(p => ({ x: p[0], y: toDisplay(p[1]) })),
       borderColor:  isHL ? '#ff6600' : col,
       borderWidth:  isHL ? 3 : 1.2,
       pointRadius:  isHL ? 4 : 0,
@@ -981,7 +1001,7 @@ function renderAllDecline(){
           ticks: { stepSize: 5, font: { size: 10 } },
         },
         y: {
-          title: { display: true, text: 'Temperature (°C)', font: { size: 11 } },
+          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 11 } },
           ticks: { font: { size: 10 } },
         }
       }
@@ -1010,7 +1030,7 @@ function renderPredCurve(){
   const run = getSliderRun();
 
   // predicted points at each horizon (0yr model handles initial value)
-  const predData = HORIZONS.map(yr => ({ x: yr, y: predict(run, yr) }));
+  const predData = HORIZONS.map(yr => ({ x: yr, y: toDisplay(predict(run, yr)) }));
 
   const datasets = [
     {
@@ -1027,7 +1047,7 @@ function renderPredCurve(){
     },
     {
       label: 'MC optimal (600ft, 30ft spac, 1600 bbl/d) — surrogate',
-      data: HORIZONS.map((yr,i) => ({ x: yr, y: BEST_TEMPS[i] })),
+      data: HORIZONS.map((yr,i) => ({ x: yr, y: toDisplay(BEST_TEMPS[i]) })),
       borderColor: '#185FA5',
       borderWidth: 2,
       pointRadius: 3,
@@ -1067,7 +1087,7 @@ function renderPredCurve(){
           ticks: { stepSize: 5, font: { size: 10 } },
         },
         y: {
-          title: { display: true, text: 'Temperature (°C)', font: { size: 11 } },
+          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 11 } },
           ticks: { font: { size: 10 } },
         }
       }
@@ -1079,8 +1099,8 @@ function renderPredCurve(){
     const p = predict(run, yr);
     return `<div class="mc">
       <div class="ml">${yr} yr</div>
-      <div class="mv" style="font-size:15px">${p.toFixed(1)}</div>
-      <div class="mu">°C</div>
+      <div class="mv" style="font-size:15px">${toDisplay(p).toFixed(1)}</div>
+      <div class="mu">${unitLabel()}</div>
     </div>`;
   }).join('');
 
@@ -1370,8 +1390,8 @@ function setHorizon(h, btn){
   if(Object.keys(models).length > 0){
     const run = getSliderRun();
     const p = predict(run, h);
-    document.getElementById('pred-val').textContent  = p.toFixed(1);
-    document.getElementById('pred-unit').textContent = 'Predicted °C at ' + h + ' yr';
+    document.getElementById('pred-val').textContent  = toDisplay(p).toFixed(1);
+    document.getElementById('pred-unit').textContent = 'Predicted ' + unitLabel() + ' at ' + h + ' yr';
     updateEquationTab();
     updateSensitivity();
     renderRSM();
