@@ -997,12 +997,12 @@ function renderAllDecline(){
           type: 'linear',
           min: 0,
           max: 30,
-          title: { display: true, text: 'Production time (years)', font: { size: 11 } },
-          ticks: { stepSize: 5, font: { size: 10 } },
+          title: { display: true, text: 'Production time (years)', font: { size: 15 } },
+          ticks: { stepSize: 5, font: { size: 15 } },
         },
         y: {
-          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 11 } },
-          ticks: { font: { size: 10 } },
+          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 15 } },
+          ticks: { font: { size: 15 } },
         }
       }
     }
@@ -1083,12 +1083,12 @@ function renderPredCurve(){
           type: 'linear',
           min: 0,
           max: 30,
-          title: { display: true, text: 'Production time (years)', font: { size: 11 } },
-          ticks: { stepSize: 5, font: { size: 10 } },
+          title: { display: true, text: 'Production time (years)', font: { size: 15 } },
+          ticks: { stepSize: 5, font: { size: 15 } },
         },
         y: {
-          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 11 } },
-          ticks: { font: { size: 10 } },
+          title: { display: true, text: 'Temperature (' + unitLabel() + ')', font: { size: 15 } },
+          ticks: { font: { size: 15 } },
         }
       }
     }
@@ -1578,7 +1578,7 @@ function updateEnergy(){
           x:{ type:'linear', min:0, max:30,
               title:{display:true,text:'Production time (years)',font:{size:15}},
               ticks:{stepSize:5,font:{size:15}} },
-          y:{ title:{display:true,text:'Net Power (MW)',font:{size:15}},
+          y:{ title:{display:true,text:'Thermal power (MW)',font:{size:15}},
               ticks:{font:{size:15}} }
         }}
     });
@@ -1670,7 +1670,7 @@ function renderPowerCurves(){
       scales:{
         x:{ type:'linear', min:0, max:30, title:{display:true,text:'Production time (years)',font:{size:15}},
             ticks:{stepSize:5,font:{size:15}} },
-        y:{ title:{display:true,text:'Net electrical power (MWe)',font:{size:15}}, ticks:{font:{size:15}} }
+        y:{ title:{display:true,text:'Net Power (MW)',font:{size:15}}, ticks:{font:{size:15}} }
       }}
   });
 
