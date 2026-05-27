@@ -28,7 +28,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pill-green{background:var(--green-bg);color:var(--green-t)}
 
 /* LAYOUT */
-.layout{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 46px);overflow:hidden}
+.layout{display:grid;grid-template-columns:440px 1fr;height:calc(100vh - 46px);overflow:hidden}
 .side{background:var(--bg);border-right:.5px solid var(--border2);overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
 .main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:1200px}
 
@@ -58,7 +58,7 @@ tbody tr.best td{background:var(--green-bg);color:var(--green-t);font-weight:600
 tbody tr.worst td{background:var(--red-bg);color:var(--red)}
 
 /* SLIDERS */
-.srow{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:6px;margin-bottom:7px}
+.srow{display:grid;grid-template-columns:150px 1fr 65px;align-items:center;gap:6px;margin-bottom:7px}
 .srow label{font-size:14px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .srow input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;min-width:0}
 .srow .sv{font-size:14px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
@@ -126,7 +126,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
       <span class="sv" id="lbl-angle">120°</span>
     </div>
     <div class="srow">
-      <label>Spacing (ft)</label>
+      <label>Fracture spacing (ft)</label>
       <input type="range" id="sl-spac" min="30" max="150" step="1" value="90" oninput="sliderChanged()">
       <span class="sv" id="lbl-spac">90 ft</span>
     </div>
@@ -136,7 +136,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
       <span class="sv" id="lbl-flow">1350</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:var(--blue-bg);border-radius:6px">
-      <span style="font-size:11px;color:var(--blue-t);font-weight:600">No. of fractures  ⌈3160 / spacing⌉</span>
+      <span style="font-size:11px;color:var(--blue-t);font-weight:600">No. of fractures  ⌈3160ft of stimulated well / spacing between fractures (ft)⌉</span>
       <span style="font-size:13px;font-weight:700;color:var(--blue-t)" id="lbl-nfracs">36</span>
     </div>
     <div style="background:var(--green-bg);border-radius:6px;padding:7px 9px;margin-bottom:7px">
@@ -321,7 +321,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <!-- RSM TAB -->
   <div id="tab-rsm" class="tc">
     <div class="panel">
-      <div class="ptitle">Response surface — predicted temperature at selected horizon</div>
+      <div class="ptitle">Response surface — 30-year net electrical energy (GWhe)</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
         <label style="font-size:11px;color:var(--text2)">X axis: <select id="rsm-x" onchange="renderRSM()" style="margin-left:4px"><option value="0">Distance</option><option value="1">Angle</option><option value="2">Spacing</option><option value="3">Flow</option></select></label>
         <label style="font-size:11px;color:var(--text2)">Y axis: <select id="rsm-y" onchange="renderRSM()" style="margin-left:4px"><option value="0">Distance</option><option value="1" selected>Angle</option><option value="2">Spacing</option><option value="3">Flow</option></select></label>
@@ -534,6 +534,27 @@ const TS = {
   24: [[0.5,214.5],[1,215.2],[2,215.3],[3,214.8],[4,214.1],[5,213.2],[6,212.2],[7,211.1],[8,209.9],[9,208.6],[10,207.2],[12,204.4],[15,199.9],[20,192.3],[25,185.6],[30,178.9]],
   25: [[0.5,218.0],[1,218.7],[2,219.0],[3,218.8],[4,218.3],[5,217.4],[6,216.3],[7,214.9],[8,213.2],[9,211.4],[10,209.4],[12,205.3],[15,198.3],[20,187.1],[25,177.1],[30,168.6]],
 };
+
+// ── MAINTENANCE SWITCH ────────────────────────────────────────────────────
+// Set to true to instantly show maintenance page, false to show the tool
+const MAINTENANCE_MODE = false;
+const MAINTENANCE_MESSAGE = "EGSim is currently undergoing maintenance. Please check back soon.";
+
+if(MAINTENANCE_MODE){
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                  height:100vh;background:#f5f6f8;font-family:-apple-system,sans-serif;text-align:center;padding:40px">
+        <div style="font-size:48px;margin-bottom:16px">🔧</div>
+        <h1 style="font-size:32px;font-weight:800;color:#1a1a1a;margin-bottom:8px">EGSim</h1>
+        <p style="font-size:16px;color:#555;max-width:420px;line-height:1.6;margin-bottom:24px">${MAINTENANCE_MESSAGE}</p>
+        <div style="background:#e6f1fb;border-radius:8px;padding:10px 20px;color:#0c447c;font-size:13px">
+          Enhanced Geothermal System · Surrogate-Based Digital Twin
+        </div>
+      </div>`;
+  });
+}
+// ── END MAINTENANCE SWITCH ─────────────────────────────────────────────────
 
 const HORIZONS = [0,1,5,10,15,20,25,30];
 
@@ -1289,12 +1310,45 @@ function renderRSM(){
   const xv = Array.from({length:N}, (_,i) => xr.lo  + i*(xr.hi -xr.lo) /(N-1));
   const yv = Array.from({length:N}, (_,i) => yr2.lo + i*(yr2.hi-yr2.lo)/(N-1));
 
+  // Compute 30yr net electrical energy through full chain for each grid point
+  const orc_rsm   = getOrcEff();
+  const raw_par   = parseFloat(document.getElementById('e-parasitic').value);
+  const isAuto_rsm = (raw_par <= 20.05);
+  const par_ov_rsm = isAuto_rsm ? -1 : raw_par;
+
   const pts = []; let mn=1e9, mx=-1e9;
   yv.forEach(yval => xv.forEach(xval => {
     const cv = FKEYS.map((f,i) => { let v=fixed[i]; if(i===xi) v=xval; if(i===yi) v=yval; return code(v,rs[i]); });
     const [c1,c2,c3,c4] = cv;
-    const row = [1,c1,c2,c3,c4,c1*c1,c2*c2,c3*c3,c4*c4,c1*c2,c1*c3,c1*c4,c2*c3,c2*c4,c3*c4];
-    const z = row.reduce((s,v,j) => s + v*models[horizon].beta[j], 0);
+    const row = [1,c1,c2,c3,c4,c1*c1,c2*c2,c3*c3,c4*c4,c1*c2,c1*c3,c1*c4,c2*c3,c2*c4,c3*c4,
+                 c1*c3*c4, c1*c1*c3, c1*c3*c3];
+
+    // Predict temps at all horizons using index to avoid closure issues
+    const T_all = HORIZONS.map((yr,hi) => {
+      const m = models[yr];
+      if(!m) return 200; // fallback
+      return row.reduce((s,v,j) => s + v*(m.beta[j]||0), 0);
+    });
+
+    // Decode physical spac and flow from coded values using R.spac.hi/lo/mid
+    const spac_v = Math.max(R.spac.lo, Math.min(R.spac.hi,
+                   cv[2] * (R.spac.hi - R.spac.mid) + R.spac.mid));
+    const flow_v = Math.max(R.flow.lo, Math.min(R.flow.hi,
+                   cv[3] * (R.flow.hi - R.flow.mid) + R.flow.mid));
+    const nf_v   = Math.ceil(3160 / spac_v);
+    const qtot_v = nf_v * flow_v;
+    const mdot_v = qtot_v * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER;
+
+    // Gross thermal → gross electrical → net electrical → integrate
+    const P_eg  = T_all.map(t => mdot_v * CP_WATER * (t - T_INJ) / 1e6 * orc_rsm);
+    const fp_v  = getParasiticFrac(qtot_v, par_ov_rsm);
+    const par_v = P_eg[0] * fp_v;
+    const P_net = P_eg.map(p => Math.max(0, p - par_v));
+    // Trapezoid integration using H_SEC array
+    let z = 0;
+    for(let k=1; k<H_SEC.length; k++) z += 0.5*(P_net[k-1]+P_net[k])*(H_SEC[k]-H_SEC[k-1]);
+    z = z / 3.6e6; // convert MWe·s to GWhe (P_net is MWe, not W)
+
     pts.push({x:xval, y:yval, z});
     if(z<mn) mn=z; if(z>mx) mx=z;
   }));
@@ -1322,7 +1376,7 @@ function renderRSM(){
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => `${FLAB[xi].split(' ')[0]}: ${ctx.parsed.x.toFixed(0)}, ${FLAB[yi].split(' ')[0]}: ${ctx.parsed.y.toFixed(0)} → ${ctx.raw._z.toFixed(1)}°C`
+            label: ctx => `${FLAB[xi].split(' ')[0]}: ${ctx.parsed.x.toFixed(0)}, ${FLAB[yi].split(' ')[0]}: ${ctx.parsed.y.toFixed(0)} → ${(ctx.raw._z||0).toFixed(0)} GWhe`
           }
         }
       },
@@ -1334,8 +1388,9 @@ function renderRSM(){
   });
 
   document.getElementById('leg-rsm').innerHTML =
-    `<div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(24,95,165,.85)"></div>Low: ${mn.toFixed(1)}°C</div>
-     <div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(216,90,48,.85)"></div>High: ${mx.toFixed(1)}°C</div>`;
+    `<div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(24,95,165,.85)"></div>Low: ${mn.toFixed(0)} GWhe</div>
+     <div style="display:flex;align-items:center;gap:4px"><div class="leg-dot" style="background:rgba(216,90,48,.85)"></div>High: ${mx.toFixed(0)} GWhe</div>
+     ${mn===mx ? '<span style="color:var(--red);font-size:11px">⚠ Open Energy tab first to initialise ORC settings</span>' : ''}`;
 }
 
 // ============================================================
@@ -1409,7 +1464,7 @@ function setMainTab(name, btn){
   if(name==='decline')     renderAllDecline();
   if(name==='predict')     renderPredCurve();
   if(name==='sensitivity') updateSensitivity();
-  if(name==='rsm')         renderRSM();
+  if(name==='rsm')         { updateEnergy(); renderRSM(); }
   if(name==='energy')      updateEnergy();
 }
 
@@ -1434,7 +1489,8 @@ function buildDataTable(){
     return `<tr>
       <td>${r.s}</td>
       <td><span class="badge b-blue">${r.c}</span></td>
-      <td>${r.dist}</td><td>${r.angle}</td><td>${r.spac}</td><td>${r.flow}</td><td>${r.nf}</td>
+      <td>${r.dist}</td><td>${r.angle}</td><td>${r.spac}</td><td>${r.flow}</td><td>${Math.ceil(3160/r.spac)}</td>
+      <td>${(Math.ceil(3160/r.spac)*r.flow).toLocaleString()}</td>
       <td style="color:var(--text3)">${cx[0]}</td><td style="color:var(--text3)">${cx[1]}</td>
       <td style="color:var(--text3)">${cx[2]}</td><td style="color:var(--text3)">${cx[3]}</td>
       ${T.map(v=>`<td>${v.toFixed(1)}</td>`).join('')}
@@ -1578,7 +1634,7 @@ function updateEnergy(){
           x:{ type:'linear', min:0, max:30,
               title:{display:true,text:'Production time (years)',font:{size:15}},
               ticks:{stepSize:5,font:{size:15}} },
-          y:{ title:{display:true,text:'Thermal power (MW)',font:{size:15}},
+          y:{ title:{display:true,text:'Net Power (MW)',font:{size:15}},
               ticks:{font:{size:15}} }
         }}
     });
