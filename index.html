@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EGSim</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
 <style>
 :root{
   --bg:#fff;--bg2:#f5f6f8;--bg3:#eef0f4;
@@ -184,14 +185,15 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <div class="tabs" style="background:var(--bg);border:.5px solid var(--border);flex-wrap:wrap" id="main-tabs">
     <button class="tab act" onclick="setMainTab('predict',this)">Temperature profile prediction</button>
     <button class="tab" onclick="setMainTab('energy',this)">⚡ Energy</button>
-    <button class="tab" onclick="setMainTab('decline',this)">All decline curves</button>
+    <button class="tab" onclick="setMainTab('decline',this)" style="display:none">All decline curves</button>
     <button class="tab" onclick="setMainTab('sensitivity',this)">Sensitivity</button>
+    <button class="tab" onclick="setMainTab('breakthrough',this)">Thermal Breakthrough</button>
     <button class="tab" onclick="setMainTab('rsm',this)">Response surface</button>
-    <button class="tab" onclick="setMainTab('data',this)">Simulation data</button>
+    <button class="tab" onclick="setMainTab('data',this)" style="display:none">Simulation data</button>
   </div>
 
   <!-- DATA TAB -->
-  <div id="tab-data" class="tc">
+  <div id="tab-data" class="tc" style="display:none !important">
     <div class="panel">
       <div class="ptitle">25-run Box-Behnken design — Numerical Simulation produced temperature (°C)</div>
       <div style="overflow-x:auto">
@@ -204,7 +206,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   </div>
 
   <!-- ALL DECLINE CURVES TAB -->
-  <div id="tab-decline" class="tc">
+  <div id="tab-decline" class="tc" style="display:none !important">
     <div class="panel">
       <div class="ptitle">Temperature decline curves — all 25 Numerical Simulation scenarios</div>
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
@@ -241,6 +243,28 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
       <div class="ptitle">Predicted temperature at all 7 horizons</div>
       <div class="mrow" id="pred-all-metrics" style="grid-template-columns:repeat(8,1fr)"></div>
     </div>
+  </div>
+
+  <!-- THERMAL BREAKTHROUGH TAB -->
+  <div id="tab-breakthrough" class="tc">
+
+
+
+    <!-- Metrics row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px" id="bt-metrics"></div>
+
+    <!-- dT/dt chart -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Rate of Temperature Change (°C/yr)</div>
+      <div class="cw" style="height:320px"><canvas id="chart-dtdt"></canvas></div>
+    </div>
+
+    <!-- Cumulative ΔT chart -->
+    <div class="panel">
+      <div class="ptitle">Cumulative Temperature Drop from Year 0 (°C)</div>
+      <div class="cw" style="height:320px"><canvas id="chart-cumdt"></canvas></div>
+    </div>
+
   </div>
 
   <!-- SENSITIVITY TAB -->
@@ -726,6 +750,7 @@ let chartAvp=null, chartSensTime=null, chartRSM=null, chartRank=null;
 let chartDecline=null, chartPred=null;
 let chartPowerPred=null, chartPowerCurves=null;
 let chartEnergySobol=null, chartTornado=null, chartContour=null, chartMcHist=null;
+let chartDtdt=null, chartCumdt=null;
 // ============================================================
 //  OLS SOLVER
 // ============================================================
@@ -837,7 +862,10 @@ function sliderChanged(){
   if(activeTab){
     const name = activeTab.getAttribute('onclick').match(/'([^']+)'/)[1];
     if(name === 'predict') renderPredCurve();
+    if(name === 'energy')  updateEnergy();
     if(name === 'rsm')     renderRSM();
+    if(name === 'sensitivity') updateSensitivity();
+    if(name === 'breakthrough') renderBreakthrough();
   }
 }
 
@@ -1464,6 +1492,7 @@ function setMainTab(name, btn){
   if(name==='decline')     renderAllDecline();
   if(name==='predict')     renderPredCurve();
   if(name==='sensitivity') updateSensitivity();
+  if(name==='breakthrough') renderBreakthrough();
   if(name==='rsm')         { updateEnergy(); renderRSM(); }
   if(name==='energy')      updateEnergy();
 }
@@ -1879,6 +1908,146 @@ function renderMcHist(){
   });
 }
 
+// ── THERMAL BREAKTHROUGH ANALYSIS
+
+function renderBreakthrough(){
+  const run       = getSliderRun();
+  const threshold = 5.0;
+  // label updated inline via oninput
+
+  // Predicted temps at all horizons
+  const T = HORIZONS.map(yr => predict(run, yr));
+
+  // dT/dt — finite differences (°C/yr)
+  // Between consecutive horizons
+  const midpoints = [], dtdt = [];
+  for(let i = 1; i < HORIZONS.length; i++){
+    const dt = HORIZONS[i] - HORIZONS[i-1];
+    midpoints.push(((HORIZONS[i] + HORIZONS[i-1]) / 2).toFixed(1));
+    dtdt.push(Math.min(0, (T[i] - T[i-1]) / dt));       // clip positive (heating) to 0
+  }
+
+  // Cumulative ΔT from year 0
+  const cumDT     = HORIZONS.map((yr, i) => T[i] - T[0]);
+
+  // Find breakthrough horizon — first point where dT/dt < -threshold
+  const btIdx = dtdt.findIndex(v => v < -threshold);
+  const btYear = btIdx >= 0 ? midpoints[btIdx] + ' yr' : 'None detected';
+
+  // Total decline
+  const totalDecline = T[T.length-1] - T[0];
+
+  // Metrics
+  document.getElementById('bt-metrics').innerHTML = [
+    { l:'Year-0 Temperature', v: toDisplay(T[0]).toFixed(1), u: unitLabel() },
+    { l:'Year-30 Temperature', v: toDisplay(T[T.length-1]).toFixed(1), u: unitLabel() },
+    { l:'Total Decline', v: Math.abs(totalDecline).toFixed(1), u: '°C' },
+    { l:'Breakthrough at', v: btYear, u: '(≤ −'+threshold.toFixed(1)+'°C/yr)' },
+  ].map(m => `<div class="mc">
+    <div class="ml">${m.l}</div>
+    <div class="mv" style="font-size:16px">${m.v}</div>
+    <div class="mu">${m.u}</div>
+  </div>`).join('');
+
+
+  // ── dT/dt chart ──────────────────────────────────────────────────────────
+  if(chartDtdt) chartDtdt.destroy();
+  // Colors for points
+  const ptColors = dtdt.map(v => v < -threshold ? '#922b21' : '#c0392b');
+
+  chartDtdt = new Chart(document.getElementById('chart-dtdt'), {
+    type: 'line',
+    data: {
+      datasets: [{
+        label: 'dT/dt (°C/yr)',
+        data: midpoints.map((m,i) => ({ x: parseFloat(m), y: dtdt[i] })),
+        borderColor: '#c0392b',
+        borderWidth: 2.5,
+        pointRadius: 6,
+        pointBackgroundColor: ptColors,
+        pointBorderColor: ptColors,
+        fill: true,
+        backgroundColor: 'rgba(192,57,43,0.08)',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{ font:{size:13}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => `dT/dt: ${ctx.parsed.y.toFixed(2)} °C/yr` } },
+        annotation: {
+          annotations: {
+            peakLine: (function(){
+              const minVal = Math.min(...dtdt);
+              const minIdx = dtdt.indexOf(minVal);
+              const peakX  = parseFloat(midpoints[minIdx]);
+              return {
+                type: 'line',
+                xMin: peakX, xMax: peakX,
+                borderColor: '#000000',
+                borderWidth: 2,
+                borderDash: [6, 3],
+                label: {
+                  content: peakX + ' yr',
+                  display: true,
+                  position: 'start',
+                  color: '#000000',
+                  backgroundColor: 'rgba(255,255,255,0.85)',
+                  font: { size: 11, weight: 'bold' }
+                }
+              };
+            })()
+          }
+        }
+      },
+      scales: {
+        x: { type:'linear', min:0, max:30,
+             title:{ display:true, text:'Production time (years)', font:{size:14} },
+             ticks:{ font:{size:13}, stepSize:5 } },
+        y: { min:-14, max:0,
+             title:{ display:true, text:'dT/dt (°C/yr)', font:{size:14} },
+             ticks:{ font:{size:13} } }
+      }
+    }
+  });
+
+  // ── Cumulative ΔT chart ───────────────────────────────────────────────────
+  if(chartCumdt) chartCumdt.destroy();
+  chartCumdt = new Chart(document.getElementById('chart-cumdt'), {
+    type: 'line',
+    data: {
+      datasets: [
+        { label: 'Current config ΔT (°C)',
+          data: HORIZONS.map((yr,i) => ({ x:yr, y: toDisplay(T[i]) - toDisplay(T[0]) })),
+          borderColor: '#ff6600', borderWidth: 3, pointRadius: 5,
+          fill: true,
+          backgroundColor: 'rgba(255,102,0,0.08)',
+          tension: 0.3 },
+
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{ font:{size:13}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} °C` } }
+      },
+      scales: {
+        x: { type:'linear', min:0, max:30,
+             title:{ display:true, text:'Production time (years)', font:{size:14} },
+             ticks:{ font:{size:13}, stepSize:5 } },
+        y: { title:{ display:true, text:'ΔT from year 0 (°C)', font:{size:14} },
+             ticks:{ font:{size:13} } }
+      }
+    }
+  });
+}
+
+
+// ── STARTUP ───────────────────────────────────────────────────────────────
+drawWellDiagram();
+fitAllModels();
+renderPredCurve();
+sliderChanged();
 </script>
-</body>
-</html>
