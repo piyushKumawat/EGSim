@@ -422,7 +422,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     </div>
 
     <!-- All 25 scenarios energy table -->
-    <div class="panel" style="margin-bottom:10px">
+    <div class="panel" style="display:none">
       <div class="ptitle">All 25 scenarios — 30-year cumulative energy</div>
       <div style="overflow-x:auto">
         <table>
@@ -2019,7 +2019,7 @@ function renderBreakthrough(){
     data: {
       datasets: [
         { label: 'Current config ΔT (°C)',
-          data: HORIZONS.map((yr,i) => ({ x:yr, y: toDisplay(T[i]) - toDisplay(T[0]) })),
+          data: HORIZONS.map((yr,i) => ({ x:yr, y: Math.min(0, toDisplay(T[i]) - toDisplay(T[0])) })),
           borderColor: '#ff6600', borderWidth: 3, pointRadius: 5,
           fill: true,
           backgroundColor: 'rgba(255,102,0,0.08)',
