@@ -31,7 +31,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* LAYOUT */
 .layout{display:grid;grid-template-columns:440px 1fr;height:calc(100vh - 46px);overflow:hidden}
 .side{background:var(--bg);border-right:.5px solid var(--border2);overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
-.main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:1200px}
+.main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:none;width:100%;min-width:0;justify-self:stretch}
 
 /* PANELS */
 .panel{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:10px 12px}
@@ -84,7 +84,240 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 .b-green{background:var(--green-bg);color:var(--green-t)}
 .b-amber{background:var(--amber-bg);color:var(--amber)}
 .cw{position:relative;width:100%;max-width:860px}
+#tab-predict .cw{width:92%;max-width:1180px;min-width:0;margin-left:auto;margin-right:auto}
+@media (max-width:900px){#tab-predict .cw{width:100%;max-width:none}}
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--text3);align-items:center}
+
+/* ENERGY TAB: stable full-width layout */
+#tab-energy{width:100%;min-width:0}
+#tab-energy > .panel,#tab-energy > #wl-section{width:100%;min-width:0;clear:both}
+#tab-energy .cw{max-width:none;width:100%;min-width:0}
+#wl-section{width:100%;min-width:0}
+.energy-parameter-row{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(230px,1fr)) minmax(165px,.55fr);
+  gap:10px;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+}
+.energy-injection-card,
+.energy-control-card{
+  min-width:0;
+  width:auto;
+  max-width:100%;
+  border:.5px solid var(--border);
+  border-radius:var(--r);
+  padding:8px 10px 7px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.energy-injection-card{
+  background:rgba(24,95,165,.055);
+  color:var(--text2);
+  border-style:dashed;
+  align-items:flex-end;
+  text-align:right;
+  padding:7px 9px;
+}
+.energy-injection-label{
+  font-size:10px;
+  font-weight:600;
+  line-height:1.15;
+  margin-bottom:3px;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.energy-injection-value{
+  font-size:12px;
+  font-weight:650;
+  line-height:1.25;
+  white-space:nowrap;
+  color:var(--blue-t);
+}
+.energy-injection-fixed{
+  display:block;
+  margin-top:2px;
+  font-size:9px;
+  font-weight:400;
+  color:var(--text3);
+}
+.energy-control-card{
+  background:var(--bg2);
+}
+.energy-control-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:1px;
+  order:0;
+}
+.energy-control-label{
+  min-width:0;
+  color:var(--text2);
+  font-size:13px;
+  font-weight:600;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.energy-control-value{
+  flex:0 0 auto;
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  line-height:1.15;
+  text-align:right;
+  white-space:nowrap;
+}
+.energy-control-card input[type=range]{
+  display:block;
+  width:100%;
+  min-width:0;
+  height:4px;
+  margin:4px 0 0;
+  accent-color:var(--blue);
+  cursor:pointer;
+  order:2;
+}
+.energy-control-note{
+  color:var(--text3);
+  font-size:10px;
+  line-height:1.25;
+  margin:0;
+  min-height:25px;
+  order:1;
+}
+@media (max-width:1180px){
+  .energy-parameter-row{grid-template-columns:repeat(2,minmax(220px,1fr))}
+  .energy-injection-card{align-items:flex-start;text-align:left}
+}
+@media (max-width:700px){
+  .energy-parameter-row{grid-template-columns:1fr}
+}
+
+
+/* ENERGY TAB: 2 x 2 charts on the left, information column on the right */
+.energy-content-grid{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(300px,.82fr);
+  gap:12px;
+  width:100%;
+  min-width:0;
+  align-items:start;
+}
+.energy-charts-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  width:100%;
+  min-width:0;
+  align-items:stretch;
+}
+.energy-info-column{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-self:start;
+}
+.energy-info-column > .panel,
+.energy-info-column #wl-section > .panel{
+  width:100%;
+  min-width:0;
+  margin-bottom:10px !important;
+}
+.energy-info-column #wl-section > .panel:last-child{margin-bottom:0 !important}
+.energy-chart-card{
+  min-width:0;
+  min-height:390px;
+  display:flex;
+  flex-direction:column;
+  margin-bottom:0 !important;
+}
+.energy-chart-card .cw{
+  flex:1 1 auto;
+  height:320px !important;
+}
+#wl-chart-section{display:contents}
+#wl-section{width:100%;min-width:0}
+#e-pred-metrics,
+#wl-s-metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+#wl-s-flow{
+  grid-template-columns:1fr !important;
+}
+.energy-info-column .mc{padding:8px 9px}
+.energy-info-column .mc .ml{font-size:11px}
+.energy-info-column .mc .mv{line-height:1.05}
+@media (max-width:1250px){
+  .energy-content-grid{grid-template-columns:1fr}
+  .energy-info-column{grid-row:2}
+}
+@media (max-width:800px){
+  .energy-charts-grid{grid-template-columns:1fr}
+  #e-pred-metrics,
+  #wl-s-metrics{grid-template-columns:1fr !important}
+}
+
+
+/* THERMAL BREAKTHROUGH TAB */
+.bt-controls{
+  display:grid;
+  grid-template-columns:minmax(330px,520px) 1fr;
+  gap:12px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.bt-threshold-control{
+  display:grid;
+  grid-template-columns:150px minmax(120px,1fr) 72px;
+  gap:8px;
+  align-items:center;
+}
+.bt-threshold-control label{font-size:13px;color:var(--text2);font-weight:600}
+.bt-criteria-stack{display:grid;gap:8px}
+.bt-threshold-control input[type=range]{width:100%;min-width:0;accent-color:var(--red)}
+.bt-threshold-control .sv{font-size:13px;font-weight:700;color:var(--red);text-align:right;white-space:nowrap}
+.bt-threshold-control.physical input[type=range]{accent-color:var(--blue)}
+.bt-threshold-control.physical .sv{color:var(--blue-t)}
+.bt-assumptions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.bt-chip{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:4px 9px;font-size:11px;color:var(--text2);white-space:nowrap}
+.bt-metrics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.bt-analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.bt-analysis-card{min-width:0;display:flex;flex-direction:column}
+.bt-analysis-card .cw{max-width:none;height:350px}
+.bt-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.bt-card-title{font-size:15px;font-weight:800;letter-spacing:.01em}
+.bt-card-title.physical{color:var(--blue-t)}
+.bt-card-title.economic{color:var(--red)}
+.bt-card-sub{font-size:11px;color:var(--text3);line-height:1.45;margin-bottom:7px}
+.bt-formula{font-family:'Courier New',monospace;background:var(--bg2);border-radius:6px;padding:4px 7px;font-size:10px;color:var(--text2);white-space:nowrap}
+.bt-case-summary{border:1px solid var(--border2);border-radius:var(--rl);padding:11px 13px;background:var(--bg);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.bt-case-icon{font-size:24px;line-height:1}
+.bt-case-copy{min-width:0}
+.bt-case-title{font-size:15px;font-weight:800;margin-bottom:2px}
+.bt-case-text{font-size:12px;color:var(--text2);line-height:1.45}
+.bt-case-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bt-case-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;min-height:88px}
+.bt-case-card.active{border:2px solid var(--blue);background:var(--blue-bg);padding:8px 9px}
+.bt-case-card .case-name{font-size:12px;font-weight:800;margin-bottom:4px}
+.bt-case-card .case-desc{font-size:10.5px;color:var(--text2);line-height:1.4}
+@media (max-width:1050px){
+  .bt-controls{grid-template-columns:1fr}
+  .bt-assumptions{justify-content:flex-start}
+  .bt-metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bt-analysis-grid{grid-template-columns:1fr}
+  .bt-case-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:650px){
+  .bt-threshold-control{grid-template-columns:1fr}
+  .bt-threshold-control .sv{text-align:left}
+  .bt-metrics-grid,.bt-case-cards{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -188,6 +421,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
     <button class="tab" onclick="setMainTab('decline',this)" style="display:none">All decline curves</button>
     <button class="tab" onclick="setMainTab('sensitivity',this)">Sensitivity</button>
     <button class="tab" onclick="setMainTab('breakthrough',this)">Thermal Breakthrough</button>
+    <button class="tab" onclick="setMainTab('waterloss',this)" style="display:none">Water Loss</button>
     <button class="tab" onclick="setMainTab('rsm',this)">Response surface</button>
     <button class="tab" onclick="setMainTab('data',this)" style="display:none">Simulation data</button>
   </div>
@@ -232,8 +466,14 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <!-- PREDICTION CURVE TAB -->
   <div id="tab-predict" class="tc act">
     <div class="panel">
-      <div class="ptitle">Surrogate-predicted decline curve vs. 3 nearest Numerical Simulation scenarios</div>
-      <div class="cw" style="height:380px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div class="ptitle" style="margin-bottom:0">Surrogate-predicted decline curve</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
+          <input type="checkbox" id="chk-optimal-temp" checked onchange="renderPredCurve()" style="cursor:pointer">
+          Show MC optimal
+        </label>
+      </div>
+      <div class="cw" style="height:460px">
         <canvas id="chart-pred"></canvas>
       </div>
       <div class="leg" id="leg-pred"></div>
@@ -248,21 +488,101 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   <!-- THERMAL BREAKTHROUGH TAB -->
   <div id="tab-breakthrough" class="tc">
 
-
-
-    <!-- Metrics row -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px" id="bt-metrics"></div>
-
-    <!-- dT/dt chart -->
     <div class="panel" style="margin-bottom:10px">
-      <div class="ptitle">Rate of Temperature Change (°C/yr)</div>
-      <div class="cw" style="height:320px"><canvas id="chart-dtdt"></canvas></div>
+      <div class="ptitle">Breakthrough criteria</div>
+      <div class="bt-controls">
+        <div>
+          <div class="bt-criteria-stack">
+            <div class="bt-threshold-control physical">
+              <label>Physical threshold</label>
+              <input type="range" id="bt-phys-threshold" min="0.5" max="10" step="0.1" value="5.0"
+                     oninput="document.getElementById('bt-phys-lbl').textContent='&le; &minus;'+parseFloat(this.value).toFixed(1)+' &deg;C/yr';renderBreakthrough()">
+              <span class="sv" id="bt-phys-lbl">&le; &minus;5.0 &deg;C/yr</span>
+            </div>
+            <div class="bt-threshold-control">
+              <label>Economic threshold</label>
+              <input type="range" id="bt-econ-threshold" min="0" max="5" step="0.1" value="1.0"
+                     oninput="document.getElementById('bt-econ-lbl').textContent=parseFloat(this.value).toFixed(1)+' MWe';renderBreakthrough()">
+              <span class="sv" id="bt-econ-lbl">1.0 MWe</span>
+            </div>
+          </div>
+          <div style="font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.45">
+            Physical breakthrough is the first time the cooling rate reaches the selected negative dT/dt criterion. The minimum dT/dt and its time are still reported as the peak cooling event. Economic breakthrough is the first time net electrical power falls at or below the selected threshold. Energy calculations use the live ORC efficiency, parasitic setting, water loss, and fixed parasitic demand from the Energy tab.
+          </div>
+        </div>
+        <div class="bt-assumptions" id="bt-assumptions"></div>
+      </div>
     </div>
 
-    <!-- Cumulative ΔT chart -->
+    <div class="bt-metrics-grid" id="bt-metrics"></div>
+
+    <div class="bt-analysis-grid">
+      <div class="panel bt-analysis-card">
+        <div class="bt-card-head">
+          <div>
+            <div class="bt-card-title physical">1. Physical breakthrough</div>
+            <div class="bt-card-sub">Physical breakthrough occurs when the reservoir cooling rate first reaches the selected negative dT/dt criterion.</div>
+          </div>
+          <div class="bt-formula">t<sub>phys</sub> = first{t: dT/dt &le; &minus;R<sub>phys</sub>}</div>
+        </div>
+        <div class="cw"><canvas id="chart-dtdt"></canvas></div>
+      </div>
+
+      <div class="panel bt-analysis-card">
+        <div class="bt-card-head">
+          <div>
+            <div class="bt-card-title economic">2. Economic breakthrough</div>
+            <div class="bt-card-sub">Project reaches economic end-of-life when net electrical power crosses the selected minimum output.</div>
+          </div>
+          <div class="bt-formula">P<sub>net</sub>(t) ≤ P<sub>econ</sub></div>
+        </div>
+        <div class="cw"><canvas id="chart-bt-power"></canvas></div>
+      </div>
+    </div>
+
+    <div class="bt-case-summary" id="bt-case-summary"></div>
+    <div class="bt-case-cards" id="bt-case-cards"></div>
+
+  </div>
+
+  <!-- WATER LOSS TAB -->
+  <div id="tab-waterloss" class="tc">
+
+    <!-- Water loss slider -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Water Loss Parameters</div>
+      <div style="display:grid;grid-template-columns:150px 1fr 65px;align-items:center;gap:6px;margin-bottom:8px">
+        <label style="font-size:13px;color:var(--text2)">Loss fraction (%)</label>
+        <input type="range" id="sl-wloss" min="0" max="30" step="0.5" value="10"
+               style="width:100%;accent-color:var(--blue)"
+               oninput="onWaterLossChange(this.value)">
+        <span style="font-size:14px;font-weight:700;color:var(--blue);text-align:right" id="lbl-wloss">10.0%</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3)">Fraction of injected water lost to the formation and never recovered at producers. Reduces effective mass flow rate and net energy output.</div>
+    </div>
+
+    <!-- Metrics row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px" id="wl-metrics-top"></div>
+
+    <!-- Flow rate comparison panel -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Injection vs Effective Produced Flow Rate</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px" id="wl-flow-table"></div>
+    </div>
+
+    <!-- Energy impact chart -->
+    <div class="panel" style="margin-bottom:10px">
+      <div class="ptitle">Net Electrical Power — With vs Without Water Loss (MWe)</div>
+      <div class="cw" style="height:320px"><canvas id="chart-wl-power"></canvas></div>
+    </div>
+
+    <!-- Water loss stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px" id="wl-metrics-bot"></div>
+
+    <!-- Cumulative make-up water chart -->
     <div class="panel">
-      <div class="ptitle">Cumulative Temperature Drop from Year 0 (°C)</div>
-      <div class="cw" style="height:320px"><canvas id="chart-cumdt"></canvas></div>
+      <div class="ptitle">Cumulative Make-up Water Required Over 30 Years</div>
+      <div class="cw" style="height:280px"><canvas id="chart-wl-water"></canvas></div>
     </div>
 
   </div>
@@ -361,64 +681,132 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 
     <!-- Controls row -->
     <div class="panel" style="margin-bottom:10px">
-      <div class="ptitle">Calculation parameters</div>
-      <div style="display:grid;grid-template-columns:420px 1fr;gap:60px;align-items:start">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="ptitle" style="margin-bottom:0">Calculation parameters</div>
+        <span style="position:relative">
+          <button onclick="var b=document.getElementById('info-box');b.style.display=b.style.display==='block'?'none':'block'"
+            style="background:var(--blue);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer;line-height:20px;text-align:center">i</button>
+          <div id="info-box" style="display:none;position:absolute;right:0;top:24px;z-index:100;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:10px;line-height:1.8;color:var(--text2);min-width:320px;box-shadow:0 4px 16px rgba(0,0,0,0.15)">
+            <b>Gross thermal power:</b><br>
+            &nbsp; Q&#775;<sub>gross</sub>(t) = &#7745; &times; C<sub>p</sub> &times; (T<sub>prod</sub> &minus; T<sub>inj</sub>)<br>
+            <b>Parasitic load (pump work):</b><br>
+            &nbsp; f<sub>p</sub> = 20&ndash;40% (linear with Q<sub>total</sub>)<br>
+            &nbsp; Par<sub>MW</sub> = Q&#775;<sub>gross</sub>(t=0) &times; f<sub>p</sub> &nbsp;<b>(fixed for project life)</b><br>
+            <b>Gross electrical:</b><br>
+            &nbsp; P<sub>elec,gross</sub>(t) = Q&#775;<sub>gross</sub>(t) &times; &eta;<sub>ORC</sub><br>
+            <b>Net electrical:</b><br>
+            &nbsp; P<sub>elec,net</sub>(t) = max(0, P<sub>elec,gross</sub>(t) &minus; Par<sub>MWe</sub>)<br>
+            <b>Cumulative electrical energy:</b><br>
+            &nbsp; E<sub>elec</sub> = &int;&#8320;&#179;&#176; P<sub>elec,net</sub> dt
+          </div>
+        </span>
+      </div>
 
-        <!-- Left: parasitic slider only, T_inj fixed -->
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--blue-bg);border-radius:var(--r);margin-bottom:10px">
-            <span style="font-size:11px;color:var(--blue-t);font-weight:600;min-width:160px">Injection temperature</span>
-            <span style="font-size:13px;font-weight:700;color:var(--blue-t)">165°F &nbsp;=&nbsp; 73.89°C &nbsp;<span style="font-size:10px;font-weight:400">(fixed)</span></span>
+      <!-- Three primary controls, with fixed injection temperature de-emphasized at far right -->
+      <div class="energy-parameter-row">
+        <div class="energy-control-card">
+          <div class="energy-control-head">
+            <label class="energy-control-label" for="e-parasitic">Parasitic load</label>
+            <span class="energy-control-value" id="e-parasitic-lbl">Auto</span>
           </div>
-          <div class="srow" style="margin-bottom:4px">
-            <label style="min-width:170px">Parasitic Load</label>
-            <input type="range" id="e-parasitic" min="20" max="40" step="0.1" value="20" oninput="updateEnergy()">
-            <span class="sv" id="e-parasitic-lbl" style="min-width:100px">Auto</span>
-          </div>
-          <div style="font-size:10px;color:var(--text3);margin-left:0;line-height:1.6;margin-top:4px">
-            Slide right to override parasitic % for all scenarios.<br>
-            <b>Auto:</b> 20% at Q<sub>min</sub>=24,200 bbl/d → 40% at Q<sub>max</sub>=169,600 bbl/d (linear).
-          </div>
-          <div style="margin-top:10px">
-            <div class="srow" style="margin-bottom:4px">
-              <label style="min-width:170px">ORC efficiency (η)</label>
-              <input type="range" id="e-orc" min="8" max="16" step="0.1" value="12" oninput="updateEnergy()">
-              <span class="sv" id="e-orc-lbl" style="min-width:100px">12.0%</span>
-            </div>
-            <div style="font-size:10px;color:var(--text3);line-height:1.6;margin-top:4px">
-              Binary ORC cycle: converts net thermal → net electrical.<br>
-              Typical range: 8% (low temp) to 16% (high temp, optimised plant).<br>
-              P<sub>elec</sub> = Q̇<sub>net,thermal</sub> × η<sub>ORC</sub>
-            </div>
+          <input type="range" id="e-parasitic" min="20" max="40" step="0.1" value="20" oninput="updateEnergy()">
+          <div class="energy-control-note">
+            Auto: 20% at 24,200 &rarr; 40% at 169,600 bbl/d.
           </div>
         </div>
 
-        <!-- Formula box (full width) -->
-        <div style="background:var(--bg2);border-radius:var(--r);padding:8px 10px;font-size:10px;line-height:1.7;color:var(--text2);border-left:3px solid var(--blue)">
-          <b>Gross thermal power:</b><br>
-          &nbsp; Q̇<sub>gross</sub>(t) = ṁ × Cₚ × (T<sub>prod</sub> − T<sub>inj</sub>)<br>
-          <b>Parasitic load (pump work):</b><br>
-          &nbsp; f<sub>p</sub> = 20–40% (linear with Q<sub>total</sub>)<br>
-          &nbsp; Par<sub>MW</sub> = Q̇<sub>gross</sub>(t=0) × f<sub>p</sub> &nbsp;<b>(fixed for project life)</b><br>
-          <b>Parasitic (fixed MWe at t=0):</b><br>
-          &nbsp; Par<sub>MWe</sub> = P<sub>elec,gross</sub>(t=0) × f<sub>p</sub><br>
-          <b>Gross electrical:</b><br>
-          &nbsp; P<sub>elec,gross</sub>(t) = Q̇<sub>gross</sub>(t) × η<sub>ORC</sub><br>
-          <b>Net electrical:</b><br>
-          &nbsp; P<sub>elec,net</sub>(t) = max(0, P<sub>elec,gross</sub>(t) − Par<sub>MWe</sub>)<br>
-          <b>Cumulative electrical energy:</b><br>
-          &nbsp; E<sub>elec</sub> = ∫₀³⁰ P<sub>elec,net</sub> dt
+        <div class="energy-control-card">
+          <div class="energy-control-head">
+            <label class="energy-control-label" for="e-orc">ORC efficiency (&eta;)</label>
+            <span class="energy-control-value" id="e-orc-lbl">12.0%</span>
+          </div>
+          <input type="range" id="e-orc" min="8" max="16" step="0.1" value="12" oninput="updateEnergy()">
+          <div class="energy-control-note">
+            Typical binary ORC range: 8&ndash;16%.
+          </div>
+        </div>
+
+        <div class="energy-control-card">
+          <div class="energy-control-head">
+            <label class="energy-control-label" for="e-wloss">Water loss</label>
+            <span class="energy-control-value" id="e-wloss-lbl">0.0%</span>
+          </div>
+          <input type="range" id="e-wloss" min="0" max="30" step="0.5" value="0"
+                 oninput="updateEnergyWaterLoss(this.value)">
+          <div class="energy-control-note">
+            Injected water lost to formation.
+          </div>
+        </div>
+
+        <div class="energy-injection-card" title="Fixed model input">
+          <div class="energy-injection-label">Injection temperature</div>
+          <div class="energy-injection-value">165&deg;F = 73.89&deg;C <span class="energy-injection-fixed">fixed model input</span></div>
         </div>
       </div>
     </div>
 
-    <!-- Predictor energy output -->
-    <div class="panel" style="margin-bottom:10px">
-      <div class="ptitle">Predicted energy — current slider configuration</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px" id="e-pred-metrics"></div>
-      <div class="cw" style="height:380px">
-        <canvas id="chart-power-pred" role="img" aria-label="Predicted thermal power curve"></canvas>
+    <!-- Energy charts on the left; summaries and flow information on the right -->
+    <div id="energy-content-grid" class="energy-content-grid">
+
+      <div class="energy-charts-grid" id="energy-charts-grid">
+        <!-- Chart 1: predicted energy -->
+        <div class="panel energy-chart-card" id="energy-pred-chart-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px">
+            <div class="ptitle" style="margin-bottom:0">Net electrical power prediction</div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap">
+              <input type="checkbox" id="chk-optimal-energy" checked onchange="updateEnergy()" style="cursor:pointer">
+              Show MC optimal
+            </label>
+          </div>
+          <div class="cw">
+            <canvas id="chart-power-pred" role="img" aria-label="Predicted net electrical power curve"></canvas>
+          </div>
+        </div>
+
+        <!-- Charts 2-4 appear when water loss is greater than zero -->
+        <div id="wl-chart-section" style="display:none">
+          <div class="panel energy-chart-card" id="wl-power-panel">
+            <div class="ptitle">Net Power — Current Configuration vs No-Loss Reference (MWe)</div>
+            <div class="cw"><canvas id="chart-wls-power"></canvas></div>
+          </div>
+
+          <div class="panel energy-chart-card" id="wl-water-panel">
+            <div class="ptitle">Cumulative Make-up Water Required Over 30 Years</div>
+            <div class="cw"><canvas id="chart-wls-water"></canvas></div>
+          </div>
+
+          <div class="panel energy-chart-card" id="wl-permwhe-panel">
+            <div class="ptitle">Water Lost per MWhe — Increasing as Reservoir Cools</div>
+            <div class="cw"><canvas id="chart-wls-permwhe"></canvas></div>
+          </div>
+        </div>
       </div>
+
+      <aside class="energy-info-column" aria-label="Energy and water-loss information">
+        <!-- Predictor metrics -->
+        <div class="panel" id="energy-pred-summary-panel">
+          <div class="ptitle">Predicted energy — current slider configuration</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:-2px 0 8px;font-size:10px;color:var(--text3)">
+            <span style="display:flex;align-items:center;gap:5px"><i style="width:18px;height:3px;background:#185FA5;border-radius:2px"></i>Current configuration</span>
+            <span style="display:flex;align-items:center;gap:5px"><i style="width:18px;border-top:3px dashed #7C3AED"></i>MC optimal</span>
+            <span style="display:flex;align-items:center;gap:5px"><i style="width:18px;border-top:3px dashed #6B7280"></i>No-loss reference</span>
+          </div>
+          <div style="display:grid;gap:7px" id="e-pred-metrics"></div>
+        </div>
+
+        <!-- Water-loss metrics and flow breakdown -->
+        <div id="wl-section" style="display:none">
+          <div class="panel" id="wl-summary-panel">
+            <div class="ptitle">Water Loss Analysis</div>
+            <div style="display:grid;gap:8px" id="wl-s-metrics"></div>
+          </div>
+
+          <div class="panel" id="wl-flow-panel">
+            <div class="ptitle">Flow Rate Breakdown</div>
+            <div style="display:grid;gap:10px" id="wl-s-flow"></div>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <!-- All 25 scenarios energy table -->
@@ -561,7 +949,7 @@ const TS = {
 
 // ── MAINTENANCE SWITCH ────────────────────────────────────────────────────
 // Set to true to instantly show maintenance page, false to show the tool
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 const MAINTENANCE_MESSAGE = "EGSim is currently undergoing maintenance. Please check back soon.";
 
 if(MAINTENANCE_MODE){
@@ -593,6 +981,7 @@ const H_SEC       = HORIZONS.map(yr => yr * 365.25 * SEC_PER_DAY);
 const T_INJ           = 73.89;   // fixed injection temp: 165°F = 73.89°C
 const Q_PARASITIC_MIN = 24200;   // bbl/d → 20% parasitic
 const Q_PARASITIC_MAX = 169600;  // bbl/d → 40% parasitic
+
 function getTinj(){ return T_INJ; }
 
 // Temperature unit toggle
@@ -750,7 +1139,24 @@ let chartAvp=null, chartSensTime=null, chartRSM=null, chartRank=null;
 let chartDecline=null, chartPred=null;
 let chartPowerPred=null, chartPowerCurves=null;
 let chartEnergySobol=null, chartTornado=null, chartContour=null, chartMcHist=null;
-let chartDtdt=null, chartCumdt=null;
+let chartDtdt=null, chartCumdt=null, chartBtPower=null;
+let chartWlPower=null, chartWlWater=null;
+let chartWlsP=null, chartWlsW=null, chartWlsPerMWhe=null;
+
+// Semantic chart palette — the same meaning uses the same color everywhere.
+const CHART_COLORS = {
+  current:       '#185FA5',  // current slider configuration
+  currentFill:   'rgba(24,95,165,0.08)',
+  optimal:       '#7C3AED',  // MC-optimal reference
+  noLoss:        '#6B7280',  // no-water-loss baseline
+  waterLoss:     '#185FA5',  // current configuration when water loss is selected
+  waterLossFill: 'rgba(24,95,165,0.08)',
+  waterM3:       '#0E7490',  // water quantities in metric units
+  waterM3Fill:   'rgba(14,116,144,0.08)',
+  waterBbl:      '#f39c12',  // water quantities in field units
+  threshold:     '#922b21',  // threshold exceedance / fastest cooling
+  marker:        '#111827'
+};
 // ============================================================
 //  OLS SOLVER
 // ============================================================
@@ -861,11 +1267,12 @@ function sliderChanged(){
   const activeTab = document.querySelector('#main-tabs .tab.act');
   if(activeTab){
     const name = activeTab.getAttribute('onclick').match(/'([^']+)'/)[1];
-    if(name === 'predict') renderPredCurve();
-    if(name === 'energy')  updateEnergy();
-    if(name === 'rsm')     renderRSM();
-    if(name === 'sensitivity') updateSensitivity();
+    if(name === 'predict')      renderPredCurve();
+    if(name === 'energy')       updateEnergy();
     if(name === 'breakthrough') renderBreakthrough();
+    if(name === 'waterloss')    renderWaterLoss();
+    if(name === 'rsm')          renderRSM();
+    if(name === 'sensitivity')  updateSensitivity();
   }
 }
 
@@ -1083,10 +1490,10 @@ function renderPredCurve(){
 
   const datasets = [
     {
-      label: 'Surrogate model (prediction)',
+      label: 'Current configuration',
       data: predData,
-      borderColor: '#ff6600',
-      backgroundColor: 'rgba(255,102,0,0.1)',
+      borderColor: CHART_COLORS.current,
+      backgroundColor: CHART_COLORS.currentFill,
       borderWidth: 3,
       pointRadius: 5,
       pointStyle: 'circle',
@@ -1095,19 +1502,24 @@ function renderPredCurve(){
       order: 0,
     },
     {
-      label: 'MC optimal (600ft, 30ft spac, 1600 bbl/d) — surrogate',
+      label: 'MC optimal reference',
       data: HORIZONS.map((yr,i) => ({ x: yr, y: toDisplay(BEST_TEMPS[i]) })),
-      borderColor: '#185FA5',
+      borderColor: CHART_COLORS.optimal,
       borderWidth: 2,
       pointRadius: 3,
       fill: false,
       tension: 0.3,
       borderDash: [5,4],
       order: 1,
+      hidden: !document.getElementById('chk-optimal-temp').checked,
     }
   ];
 
-  if(chartPred) chartPred.destroy();
+  if(chartPred){
+    chartPred.data.datasets = datasets;
+    chartPred.options.scales.y.title.text = 'Temperature (' + unitLabel() + ')';
+    chartPred.update('none');
+  } else {
   chartPred = new Chart(document.getElementById('chart-pred'), {
     type: 'line',
     data: { datasets },
@@ -1119,7 +1531,7 @@ function renderPredCurve(){
         legend: {
           display: true,
           position: 'top',
-          labels: { font: { size: 10 }, boxWidth: 14, padding: 8 }
+          labels: { font: { size: 14, weight: '600' }, boxWidth: 20, padding: 14 }
         },
         tooltip: {
           callbacks: {
@@ -1142,6 +1554,7 @@ function renderPredCurve(){
       }
     }
   });
+  } // end else
 
   // metrics row
   document.getElementById('pred-all-metrics').innerHTML = HORIZONS.map(yr => {
@@ -1267,7 +1680,7 @@ function renderEnergySobol(){
       ]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false, animation: false,
       plugins: {
         legend: { position:'top', labels:{ font:{size:15}, boxWidth:12 } },
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y.toFixed(1)}%` } }
@@ -1493,6 +1906,7 @@ function setMainTab(name, btn){
   if(name==='predict')     renderPredCurve();
   if(name==='sensitivity') updateSensitivity();
   if(name==='breakthrough') renderBreakthrough();
+  if(name==='waterloss') renderWaterLoss();
   if(name==='rsm')         { updateEnergy(); renderRSM(); }
   if(name==='energy')      updateEnergy();
 }
@@ -1572,15 +1986,25 @@ function calcPredEnergy(Tinj){
   const run  = getSliderRun();
   const nf   = Math.ceil(3160 / run.spac);
   const qtot = nf * run.flow;
-  const mdot = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER; // total produced from both P1+P2
-  const P_MW = HORIZONS.map(yr => {
-    const T = predict(run, yr);
-    return T !== null ? mdot * CP_WATER * (T - Tinj) / 1e6 : null;
-  });
-  const valid = P_MW.filter(p=>p!==null);
-  if(valid.length < 2) return null;
-  const E_J  = trapz(P_MW.map(p=>p*1e6), H_SEC);
-  return { mdot, qtot, nf, P_MW, E_GWh: E_J/3.6e12, E_TJ: E_J/1e12, P_avg: valid.reduce((a,b)=>a+b,0)/valid.length };
+  const mdotFull = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER;
+  const wlEl = document.getElementById('e-wloss');
+  const wlFrac = wlEl ? parseFloat(wlEl.value)/100 : 0;
+  const mdot = mdotFull * (1 - wlFrac);
+  const temps = HORIZONS.map(yr => predict(run, yr));
+  if(temps.some(t => t === null || !Number.isFinite(t))) return null;
+
+  // Keep both cases so the Energy tab can show a true with/without-loss comparison.
+  const P_MW_no_loss = temps.map(t => mdotFull * CP_WATER * (t - Tinj) / 1e6);
+  const P_MW         = P_MW_no_loss.map(p => p * (1 - wlFrac));
+  const E_J          = trapz(P_MW.map(p=>p*1e6), H_SEC);
+
+  return {
+    mdot, mdotFull, qtot, nf, wlFrac, temps,
+    P_MW, P_MW_no_loss,
+    E_GWh: E_J/3.6e12,
+    E_TJ: E_J/1e12,
+    P_avg: P_MW.reduce((a,b)=>a+b,0)/P_MW.length
+  };
 }
 
 // (parasitic constants moved to top)
@@ -1604,6 +2028,11 @@ function calcElecNet(P_gross_thermal_arr, qtot, override, orc){
            P_elec_gross, par_MWe };
 }
 
+function updateEnergyWaterLoss(val){
+  document.getElementById('e-wloss-lbl').textContent = parseFloat(val).toFixed(1) + '%';
+  updateEnergy();
+}
+
 function updateEnergy(){
   const Tinj = T_INJ;  // fixed: 165°F = 73.89°C
 
@@ -1613,6 +2042,10 @@ function updateEnergy(){
   const parasiticOverride = isAuto ? -1 : rawParasitic;
   const parasLbl = document.getElementById('e-parasitic-lbl');
   parasLbl.textContent = isAuto ? 'Auto (flow-based)' : rawParasitic.toFixed(1) + '% (fixed)';
+
+  // Water loss fraction
+  const _wlEl  = document.getElementById('e-wloss');
+  const wlFrac = _wlEl ? parseFloat(_wlEl.value)/100 : 0;
 
   // ── Predictor panel ────────────────────────────────────────────────────
   const orc = getOrcEff();
@@ -1624,37 +2057,55 @@ function updateEnergy(){
     const nf    = Math.ceil(3160 / run.spac);
     const qtot  = nf * run.flow;
     const fp = getParasiticFrac(qtot, isAuto ? -1 : parasiticOverride);
-    const { P_elec_net, P_elec_gross: P_eg, par_MWe } = calcElecNet(pred.P_MW, qtot, isAuto ? -1 : parasiticOverride, orc);
+
+    // Calculate no-loss and with-loss electrical output using the same current
+    // ORC efficiency and the same fixed parasitic load. Pumping infrastructure
+    // is sized from the no-loss year-0 case, so water loss does not reduce it.
+    const P_eg_no_loss = pred.P_MW_no_loss.map(p => p * orc);
+    const P_eg         = pred.P_MW.map(p => p * orc);
+    const par_MWe      = P_eg_no_loss[0] * fp;
+    const P_elec_no_loss = P_eg_no_loss.map(p => Math.max(0, p - par_MWe));
+    const P_elec_net     = P_eg.map(p => Math.max(0, p - par_MWe));
+
     const E_elec_J   = trapz(P_elec_net.map(p=>p*1e6), H_SEC);
     const E_elec_GWh = E_elec_J / 3.6e12;
     const P_elec_avg = P_elec_net.reduce((a,b)=>a+b,0)/P_elec_net.length;
-    const P_eg0      = P_eg[0];  // gross elec at t=0
+    const P_eg0      = P_eg[0];
 
     document.getElementById('e-pred-metrics').innerHTML = `
       <div class="mc"><div class="ml">Gross elec at t=0</div><div class="mv" style="font-size:14px">${P_eg0.toFixed(2)}</div><div class="mu">MWe</div></div>
       <div class="mc"><div class="ml">Parasitic (fixed)</div><div class="mv" style="font-size:14px;color:var(--red)">${par_MWe.toFixed(2)} MWe</div><div class="mu">${(fp*100).toFixed(1)}% of yr-0 elec</div></div>
       <div class="mc"><div class="ml">Net elec avg</div><div class="mv" style="font-size:14px;color:var(--green)">${P_elec_avg.toFixed(2)}</div><div class="mu">MWe</div></div>
       <div class="mc"><div class="ml">E_elec 30yr</div><div class="mv" style="font-size:14px;color:var(--green)">${E_elec_GWh.toFixed(1)}</div><div class="mu">GWhe</div></div>
+      <div class="mc"><div class="ml">Water loss</div><div class="mv" style="font-size:14px;color:${wlFrac>0?'var(--red)':'var(--text)'}">${(wlFrac*100).toFixed(1)}</div><div class="mu">% of injected flow</div></div>
 
     `;
 
     // Chart: gross vs net vs nearest Numerical Simulation
-    if(chartPowerPred) chartPowerPred.destroy();
     // MC optimal: dist=600ft, spac=30ft, flow=1600 bbl/d — scale by current ORC
     const orcScale = orc / 0.12;
     const scaledBestNet = BEST_P_NET.map(p => Math.max(0, p * orcScale));
     const datasets = [
-      { label:'Net electrical — prediction (MWe)',
+      { label:'Current configuration',
         data: HORIZONS.map((yr,i)=>({x:yr, y:P_elec_net[i]})),
-        borderColor:'#ff6600', borderWidth:3, pointRadius:5, fill:false,
+        // The current configuration is always blue. Water loss changes the
+        // values, not the identity/color of this primary prediction curve.
+        borderColor:CHART_COLORS.current,
+        backgroundColor:CHART_COLORS.currentFill,
+        borderWidth:3, pointRadius:5, fill:false,
         tension:0.3, order:0 },
       {
-        label:'MC optimal (600ft, 30ft spac, 1600 bbl/d)',
+        label:'MC optimal reference',
         data: HORIZONS.map((yr,i)=>({x:yr, y:scaledBestNet[i]})),
-        borderColor:'#185FA5', borderWidth:2, pointRadius:3,
-        fill:false, tension:0.3, borderDash:[5,4], order:1
+        borderColor:CHART_COLORS.optimal, borderWidth:2, pointRadius:3,
+        fill:false, tension:0.3, borderDash:[5,4], order:1,
+        hidden: !document.getElementById('chk-optimal-energy').checked
       }
     ];
+    if(chartPowerPred){
+      chartPowerPred.data.datasets = datasets;
+      chartPowerPred.update('none');
+    } else {
     chartPowerPred = new Chart(document.getElementById('chart-power-pred'),{
       type:'line', data:{datasets},
       options:{ responsive:true, maintainAspectRatio:false, parsing:false,
@@ -1667,7 +2118,19 @@ function updateEnergy(){
               ticks:{font:{size:15}} }
         }}
     });
-  }
+    } // end else
+
+    // Populate and show all Water Loss details directly in the Energy tab.
+    // At 0% loss, the function hides the section automatically.
+    renderWaterLossSection(qtot, wlFrac, P_elec_net, P_elec_no_loss, orc, pred);
+  } else {
+    const section = document.getElementById('wl-section');
+    const chartSection = document.getElementById('wl-chart-section');
+    const chartGrid = document.getElementById('energy-content-grid');
+    if(section) section.style.display = 'none';
+    if(chartSection) chartSection.style.display = 'none';
+    if(chartGrid) chartGrid.classList.remove('has-water-loss');
+  } // end if
 
   // ── Energy table (all 25 scenarios) ───────────────────────────────────
   const rows = DOE.map(r => {
@@ -1779,18 +2242,18 @@ function renderTornado(){
     {key:'flow',  label:'Flow/frac (bbl/d)',  col:'#f39c12'},
     {key:'angle', label:'Angle (°)',           col:'#c0392b'},
   ];
-  // sorted by total swing
+  // Two datasets: low and high value, colored green(+) or red(-)
   const datasets = [
     {
-      label:'Low value impact',
+      label: 'Moving to low value',
       data: params.map(p => TORNADO[p.key].delta_lo),
-      backgroundColor: params.map(p => TORNADO[p.key].delta_lo >= 0 ? p.col+'cc' : '#e74c3ccc'),
+      backgroundColor: params.map(p => TORNADO[p.key].delta_lo >= 0 ? 'rgba(39,174,96,0.8)' : 'rgba(231,76,60,0.8)'),
       borderWidth: 0,
     },
     {
-      label:'High value impact',
+      label: 'Moving to high value',
       data: params.map(p => TORNADO[p.key].delta_hi),
-      backgroundColor: params.map(p => TORNADO[p.key].delta_hi >= 0 ? p.col+'cc' : '#e74c3ccc'),
+      backgroundColor: params.map(p => TORNADO[p.key].delta_hi >= 0 ? 'rgba(39,174,96,0.8)' : 'rgba(231,76,60,0.8)'),
       borderWidth: 0,
     }
   ];
@@ -1800,9 +2263,18 @@ function renderTornado(){
     data: { labels: params.map(p=>p.label), datasets },
     options: {
       indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false, animation: false,
       plugins: {
-        legend: { position:'top', labels:{font:{size:15},boxWidth:12} },
+        legend: {
+          position:'top',
+          labels:{
+            font:{size:12}, boxWidth:14,
+            generateLabels: () => [
+              { text: 'Positive impact (+GWhe)', fillStyle:'rgba(39,174,96,0.8)', strokeStyle:'transparent', lineWidth:0, fontColor:'#333' },
+              { text: 'Negative impact (-GWhe)', fillStyle:'rgba(231,76,60,0.8)', strokeStyle:'transparent', lineWidth:0, fontColor:'#333' },
+            ]
+          }
+        },
         tooltip: { callbacks: { label: c => `${c.parsed.x >= 0 ? '+' : ''}${c.parsed.x.toFixed(0)} GWhe vs baseline (${TORNADO.base} GWhe)` } },
         annotation: { annotations: { baseline: { type:'line', xMin:0, xMax:0, borderColor:'#333', borderWidth:1.5 } } }
       },
@@ -1842,7 +2314,7 @@ function renderContour(){
     type: 'bubble',
     data: { datasets: [{ data: pts, backgroundColor: pts.map(p=>eColor(p._e)), borderWidth:0 }] },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false, animation: false,
       plugins: {
         legend: { display:false },
         tooltip: { callbacks: { label: c => `Spac=${c.parsed.x.toFixed(0)}ft, Dist=${c.parsed.y.toFixed(0)}ft → ${c.raw._e.toFixed(0)} GWhe` } }
@@ -1892,7 +2364,7 @@ function renderMcHist(){
       }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false, animation: false,
       plugins: {
         legend: { display:false },
         tooltip: { callbacks: { label: c=>`${c.parsed.y} configurations around ${c.parsed.x.toFixed(0)} GWhe` } }
@@ -1911,139 +2383,521 @@ function renderMcHist(){
 // ── THERMAL BREAKTHROUGH ANALYSIS
 
 function renderBreakthrough(){
-  const run       = getSliderRun();
-  const threshold = 5.0;
-  // label updated inline via oninput
+  if(!models[0]) return;
 
-  // Predicted temps at all horizons
+  const run = getSliderRun();
   const T = HORIZONS.map(yr => predict(run, yr));
+  if(T.some(v => v === null || !Number.isFinite(v))) return;
 
-  // dT/dt — finite differences (°C/yr)
-  // Between consecutive horizons
-  const midpoints = [], dtdt = [];
-  for(let i = 1; i < HORIZONS.length; i++){
+  // -----------------------------------------------------------------------
+  // Physical breakthrough: first time dT/dt reaches the selected negative
+  // cooling-rate criterion. Peak cooling (minimum dT/dt) is reported
+  // separately and is not used as the breakthrough criterion.
+  // -----------------------------------------------------------------------
+  const slopePts = [];
+  for(let i=1; i<HORIZONS.length; i++){
     const dt = HORIZONS[i] - HORIZONS[i-1];
-    midpoints.push(((HORIZONS[i] + HORIZONS[i-1]) / 2).toFixed(1));
-    dtdt.push(Math.min(0, (T[i] - T[i-1]) / dt));       // clip positive (heating) to 0
+    slopePts.push({
+      x: (HORIZONS[i] + HORIZONS[i-1]) / 2,
+      y: (T[i] - T[i-1]) / dt,
+      i0: i-1,
+      i1: i
+    });
+  }
+  const coolingPts = slopePts.map(p => ({...p, y: Math.min(0, p.y)}));
+  const minSlope = Math.min(...coolingPts.map(p => p.y));
+  const peakPoint = coolingPts.find(p => p.y === minSlope);
+  const peakCoolingYear = peakPoint ? peakPoint.x : null;
+  const physThreshold = parseFloat(document.getElementById('bt-phys-threshold').value);
+
+  function firstBelowCrossing(xs, ys, threshold){
+    if(ys[0] <= threshold) return xs[0];
+    for(let i=1; i<ys.length; i++){
+      if(ys[i] <= threshold && ys[i-1] > threshold){
+        const dy = ys[i-1] - ys[i];
+        if(Math.abs(dy) < 1e-12) return xs[i];
+        const frac = (ys[i-1] - threshold) / dy;
+        return xs[i-1] + frac * (xs[i] - xs[i-1]);
+      }
+    }
+    return null;
+  }
+  const physicalYear = firstBelowCrossing(
+    coolingPts.map(p => p.x),
+    coolingPts.map(p => p.y),
+    -physThreshold
+  );
+  const physicalReached = physicalYear !== null;
+
+  // -----------------------------------------------------------------------
+  // Economic breakthrough: use the live Energy-tab settings. This follows
+  // the same calculation chain as the Energy tab:
+  //   1. Apply water loss to produced mass flow.
+  //   2. Apply the selected ORC efficiency.
+  //   3. Calculate the parasitic fraction from Auto mode or the fixed slider.
+  //   4. Hold parasitic demand fixed at the no-loss year-0 electrical output.
+  // -----------------------------------------------------------------------
+  const nf = Math.ceil(3160 / run.spac);
+  const qtot = nf * run.flow;
+  const mdotFull = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER;
+
+  const wlEl = document.getElementById('e-wloss');
+  const wlFrac = wlEl ? parseFloat(wlEl.value) / 100 : 0;
+  const mdotCurrent = mdotFull * (1 - wlFrac);
+
+  const orcEl = document.getElementById('e-orc');
+  const orc = orcEl ? parseFloat(orcEl.value) / 100 : 0.12;
+
+  const parEl = document.getElementById('e-parasitic');
+  const rawPar = parEl ? parseFloat(parEl.value) : 20;
+  const isAuto = !Number.isFinite(rawPar) || rawPar <= 20.05;
+  const fp = getParasiticFrac(qtot, isAuto ? -1 : rawPar);
+
+  const PgrossNoLoss = T.map(t => mdotFull * CP_WATER * (t - T_INJ) / 1e6 * orc);
+  const PgrossCurrent = T.map(t => mdotCurrent * CP_WATER * (t - T_INJ) / 1e6 * orc);
+  const parMWe = PgrossNoLoss[0] * fp;
+  const Pnet = PgrossCurrent.map(p => Math.max(0, p - parMWe));
+  const econThreshold = parseFloat(document.getElementById('bt-econ-threshold').value);
+
+  const economicYear = firstBelowCrossing(HORIZONS, Pnet, econThreshold);
+
+  // -----------------------------------------------------------------------
+  // Three-case breakthrough classification.
+  // Case A = physical criterion is the first (or only) criterion reached.
+  // Case B = economic criterion is the first (or only) criterion reached.
+  // Case C = neither criterion is reached within the 30-year horizon.
+  // -----------------------------------------------------------------------
+  let caseKey, caseTitle, caseText, caseIcon;
+  if(!physicalReached && economicYear === null){
+    caseKey = 'none';
+    caseTitle = 'Case C — No breakthrough';
+    caseText = 'Neither the physical cooling-rate criterion nor the economic power threshold is reached within 30 years.';
+    caseIcon = 'C';
+  } else if(physicalReached && (economicYear === null || physicalYear <= economicYear)){
+    caseKey = 'physical';
+    caseTitle = 'Case A — Physical breakthrough';
+    if(economicYear === null){
+      caseText = 'The physical cooling-rate criterion is reached, while net power remains above the economic threshold through year 30.';
+    } else {
+      const lead = economicYear - physicalYear;
+      caseText = lead <= 0.05
+        ? 'The physical and economic criteria are reached at approximately the same time; the physical case is used as the tie-break classification.'
+        : `The physical cooling-rate criterion is reached about ${lead.toFixed(1)} years before the economic threshold.`;
+    }
+    caseIcon = 'A';
+  } else {
+    caseKey = 'economic';
+    caseTitle = 'Case B — Economic breakthrough';
+    if(!physicalReached){
+      caseText = 'Net power reaches the economic threshold, while the physical cooling-rate criterion is not reached within 30 years.';
+    } else {
+      caseText = `Net power reaches the economic threshold about ${(physicalYear - economicYear).toFixed(1)} years before the physical criterion.`;
+    }
+    caseIcon = 'B';
   }
 
-  // Cumulative ΔT from year 0
-  const cumDT     = HORIZONS.map((yr, i) => T[i] - T[0]);
-
-  // Find breakthrough horizon — first point where dT/dt < -threshold
-  const btIdx = dtdt.findIndex(v => v < -threshold);
-  const btYear = btIdx >= 0 ? midpoints[btIdx] + ' yr' : 'None detected';
-
-  // Total decline
-  const totalDecline = T[T.length-1] - T[0];
-
-  // Metrics
+  const fmtYear = v => v === null ? 'Not reached' : v.toFixed(1) + ' yr';
   document.getElementById('bt-metrics').innerHTML = [
-    { l:'Year-0 Temperature', v: toDisplay(T[0]).toFixed(1), u: unitLabel() },
-    { l:'Year-30 Temperature', v: toDisplay(T[T.length-1]).toFixed(1), u: unitLabel() },
-    { l:'Total Decline', v: Math.abs(totalDecline).toFixed(1), u: '°C' },
-    { l:'Breakthrough at', v: btYear, u: '(≤ −'+threshold.toFixed(1)+'°C/yr)' },
-  ].map(m => `<div class="mc">
-    <div class="ml">${m.l}</div>
-    <div class="mv" style="font-size:16px">${m.v}</div>
-    <div class="mu">${m.u}</div>
-  </div>`).join('');
+    {l:'Physical breakthrough', v:fmtYear(physicalYear), u:'dT/dt ≤ −'+physThreshold.toFixed(1)+' °C/yr', c:'var(--blue-t)'},
+    {l:'Peak cooling event', v:minSlope < -1e-6 ? minSlope.toFixed(2)+' °C/yr' : '0.00 °C/yr', u:peakCoolingYear === null ? 'not detected' : 'at '+peakCoolingYear.toFixed(1)+' yr', c:'var(--blue-t)'},
+    {l:'Economic breakthrough', v:fmtYear(economicYear), u:'Pnet ≤ '+econThreshold.toFixed(1)+' MWe', c:'var(--red)'},
+    {l:'Breakthrough classification', v:caseTitle, u:'first criterion reached determines Case A or B; neither gives Case C', c:'var(--text)'}
+  ].map(m => `<div class="mc"><div class="ml">${m.l}</div><div class="mv" style="font-size:${m.l==='Breakthrough classification'?'13px':'16px'};color:${m.c}">${m.v}</div><div class="mu">${m.u}</div></div>`).join('');
 
+  document.getElementById('bt-assumptions').innerHTML = `
+    <span class="bt-chip">Physical criterion ≤ −${physThreshold.toFixed(1)} °C/yr</span>
+    <span class="bt-chip">Linked to Energy tab</span>
+    <span class="bt-chip">ORC ${(orc*100).toFixed(1)}%</span>
+    <span class="bt-chip">Parasitic ${isAuto ? (fp*100).toFixed(1)+'% auto' : rawPar.toFixed(1)+'% fixed'}</span>
+    <span class="bt-chip">Water loss ${(wlFrac*100).toFixed(1)}%</span>
+    <span class="bt-chip">Fixed parasitic ${parMWe.toFixed(2)} MWe</span>`;
 
-  // ── dT/dt chart ──────────────────────────────────────────────────────────
+  document.getElementById('bt-case-summary').innerHTML = `
+    <div class="bt-case-icon">${caseIcon}</div>
+    <div class="bt-case-copy">
+      <div class="bt-case-title">${caseTitle}</div>
+      <div class="bt-case-text">${caseText} Classification is based on the first criterion reached; if neither is reached, the result is Case C.</div>
+    </div>`;
+
+  const caseCards = [
+    {key:'physical', name:'Case A — Physical breakthrough', desc:'The physical dT/dt criterion is reached first, or it is the only criterion reached within 30 years.'},
+    {key:'economic', name:'Case B — Economic breakthrough', desc:'The economic net-power threshold is reached first, or it is the only criterion reached within 30 years.'},
+    {key:'none', name:'Case C — No breakthrough', desc:'Neither the physical nor economic criterion is reached within the 30-year project horizon.'}
+  ];
+  document.getElementById('bt-case-cards').innerHTML = caseCards.map(c => `
+    <div class="bt-case-card ${c.key===caseKey?'active':''}">
+      <div class="case-name">${c.name}</div>
+      <div class="case-desc">${c.desc}</div>
+    </div>`).join('');
+
+  // Physical breakthrough chart.
   if(chartDtdt) chartDtdt.destroy();
-  // Colors for points
-  const ptColors = dtdt.map(v => v < -threshold ? '#922b21' : '#c0392b');
-
+  const yMin = Math.min(-1, Math.floor(Math.min(minSlope, -physThreshold) * 1.25));
+  const physAnnotations = {
+    physicalThreshold:{
+      type:'line', yMin:-physThreshold, yMax:-physThreshold,
+      borderColor:CHART_COLORS.threshold, borderWidth:1.7, borderDash:[6,4],
+      label:{display:true,content:'Physical criterion: ≤ −'+physThreshold.toFixed(1)+' °C/yr',position:'end',
+             color:CHART_COLORS.threshold,backgroundColor:'rgba(255,255,255,.9)',font:{size:10,weight:'bold'}}
+    }
+  };
+  if(physicalYear !== null){
+    physAnnotations.physicalLine = {
+      type:'line', xMin:physicalYear, xMax:physicalYear,
+      borderColor:CHART_COLORS.marker, borderWidth:2, borderDash:[6,3],
+      label:{display:true,content:'Physical: '+physicalYear.toFixed(1)+' yr',position:'start',
+             color:CHART_COLORS.marker,backgroundColor:'rgba(255,255,255,.9)',font:{size:11,weight:'bold'}}
+    };
+  }
+  if(peakCoolingYear !== null){
+    physAnnotations.peakLine = {
+      type:'line', xMin:peakCoolingYear, xMax:peakCoolingYear,
+      borderColor:CHART_COLORS.optimal, borderWidth:1.5, borderDash:[3,3],
+      label:{display:true,content:'Peak cooling: '+peakCoolingYear.toFixed(1)+' yr',position:'center',
+             color:CHART_COLORS.optimal,backgroundColor:'rgba(255,255,255,.9)',font:{size:10,weight:'bold'}}
+    };
+  }
   chartDtdt = new Chart(document.getElementById('chart-dtdt'), {
-    type: 'line',
-    data: {
-      datasets: [{
-        label: 'dT/dt (°C/yr)',
-        data: midpoints.map((m,i) => ({ x: parseFloat(m), y: dtdt[i] })),
-        borderColor: '#c0392b',
-        borderWidth: 2.5,
-        pointRadius: 6,
-        pointBackgroundColor: ptColors,
-        pointBorderColor: ptColors,
-        fill: true,
-        backgroundColor: 'rgba(192,57,43,0.08)',
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'top', labels:{ font:{size:13}, boxWidth:12 } },
-        tooltip: { callbacks: { label: ctx => `dT/dt: ${ctx.parsed.y.toFixed(2)} °C/yr` } },
-        annotation: {
-          annotations: {
-            peakLine: (function(){
-              const minVal = Math.min(...dtdt);
-              const minIdx = dtdt.indexOf(minVal);
-              const peakX  = parseFloat(midpoints[minIdx]);
-              return {
-                type: 'line',
-                xMin: peakX, xMax: peakX,
-                borderColor: '#000000',
-                borderWidth: 2,
-                borderDash: [6, 3],
-                label: {
-                  content: peakX + ' yr',
-                  display: true,
-                  position: 'start',
-                  color: '#000000',
-                  backgroundColor: 'rgba(255,255,255,0.85)',
-                  font: { size: 11, weight: 'bold' }
-                }
-              };
-            })()
-          }
-        }
+    type:'line',
+    data:{datasets:[{
+      label:'Current configuration dT/dt',
+      data:coolingPts.map(p => ({x:p.x,y:p.y})),
+      borderColor:CHART_COLORS.current,borderWidth:2.5,pointRadius:6,
+      pointBackgroundColor:coolingPts.map(p => p.y <= -physThreshold ? CHART_COLORS.threshold : CHART_COLORS.current),
+      pointBorderColor:coolingPts.map(p => p.y <= -physThreshold ? CHART_COLORS.threshold : CHART_COLORS.current),
+      fill:true,backgroundColor:CHART_COLORS.currentFill,tension:.35
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,parsing:false,
+      plugins:{legend:{position:'top',labels:{font:{size:12},boxWidth:12}},
+        tooltip:{callbacks:{label:ctx=>'dT/dt: '+ctx.parsed.y.toFixed(2)+' °C/yr'}},
+        annotation:{annotations:physAnnotations}},
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{stepSize:5,font:{size:12}}},
+        y:{min:yMin,max:0,title:{display:true,text:'dT/dt (°C/yr)',font:{size:14}},ticks:{font:{size:12}}}
+      }}
+  });
+
+  // Economic breakthrough chart.
+  if(chartBtPower) chartBtPower.destroy();
+  const econAnnotations = {
+    econThreshold:{type:'line',yMin:econThreshold,yMax:econThreshold,borderColor:CHART_COLORS.threshold,
+      borderWidth:1.7,borderDash:[6,4],label:{display:true,content:'Economic threshold: '+econThreshold.toFixed(1)+' MWe',
+      position:'end',color:CHART_COLORS.threshold,backgroundColor:'rgba(255,255,255,.9)',font:{size:10,weight:'bold'}}}
+  };
+  if(economicYear !== null){
+    econAnnotations.economicLine = {type:'line',xMin:economicYear,xMax:economicYear,borderColor:CHART_COLORS.marker,
+      borderWidth:2,borderDash:[6,3],label:{display:true,content:'Economic: '+economicYear.toFixed(1)+' yr',position:'start',
+      color:CHART_COLORS.marker,backgroundColor:'rgba(255,255,255,.9)',font:{size:11,weight:'bold'}}};
+  }
+  chartBtPower = new Chart(document.getElementById('chart-bt-power'), {
+    type:'line',
+    data:{datasets:[{
+      label:'Current net electrical power',
+      data:HORIZONS.map((yr,i)=>({x:yr,y:Pnet[i]})),
+      borderColor:CHART_COLORS.current,borderWidth:2.7,pointRadius:5,
+      pointBackgroundColor:CHART_COLORS.current,fill:true,backgroundColor:CHART_COLORS.currentFill,tension:.3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,parsing:false,
+      plugins:{legend:{position:'top',labels:{font:{size:12},boxWidth:12}},
+        tooltip:{callbacks:{label:ctx=>'Net power: '+ctx.parsed.y.toFixed(2)+' MWe'}},
+        annotation:{annotations:econAnnotations}},
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{stepSize:5,font:{size:12}}},
+        y:{min:0,suggestedMax:Math.max(...Pnet)*1.12,title:{display:true,text:'Net electrical power (MWe)',font:{size:14}},ticks:{font:{size:12}}}
+      }}
+  });
+}
+
+
+function onWaterLossChange(val){
+  document.getElementById('lbl-wloss').textContent = parseFloat(val).toFixed(1) + '%';
+  renderWaterLoss();
+}
+
+function renderWaterLoss(){
+  const run      = getSliderRun();
+  const orcEl    = document.getElementById('e-orc');
+  const orc      = orcEl ? parseFloat(orcEl.value)/100 : 0.12;
+  const parEl    = document.getElementById('e-parasitic');
+  const rawPar   = parEl ? parseFloat(parEl.value) : 20;
+  const isAuto   = isNaN(rawPar) || rawPar <= 20.05;
+  const lossSlEl = document.getElementById('sl-wloss');
+  const lossFrac = lossSlEl ? parseFloat(lossSlEl.value)/100 : 0.1;
+
+  const nf      = Math.ceil(3160 / run.spac);
+  const qtot    = nf * run.flow;
+  const mdot    = qtot * BBL_TO_M3 / SEC_PER_DAY * RHO_WATER;
+  const qtot_eff = qtot * (1 - lossFrac);
+  const mdot_eff = mdot * (1 - lossFrac);
+
+  const T_all = HORIZONS.map(yr => predict(run, yr));
+
+  const P_eg_base  = T_all.map(t => mdot     * CP_WATER * (t - T_INJ) / 1e6 * orc);
+  const fp_base    = getParasiticFrac(qtot, isAuto ? -1 : rawPar);
+  const par_base   = P_eg_base[0] * fp_base;  // fixed at no-loss year-0
+  const P_net_base = P_eg_base.map(p => Math.max(0, p - par_base));
+
+  const P_eg_loss  = T_all.map(t => mdot_eff * CP_WATER * (t - T_INJ) / 1e6 * orc);
+  // Use same parasitic load as no-loss case — pump work is fixed infrastructure
+  const par_loss   = par_base;
+  const P_net_loss = P_eg_loss.map(p => Math.max(0, p - par_loss));
+
+  const E_base = trapz(P_net_base.map(p=>p*1e6), H_SEC) / 3.6e12;
+  const E_loss = trapz(P_net_loss.map(p=>p*1e6), H_SEC) / 3.6e12;
+  const E_diff = E_base - E_loss;
+  const E_pct  = E_base > 0 ? (E_diff / E_base * 100) : 0;
+
+  const Q_lost_bpd = qtot * lossFrac;
+  const Q_lost_m3d = Q_lost_bpd * BBL_TO_M3;
+  const Q_lost_ls  = Q_lost_m3d * 1000 / 86400;
+  const Q_lost_gpm = Q_lost_bpd * 0.02917;
+
+  const years_30     = 30 * 365.25;
+  const cumWater_m3  = Q_lost_m3d * years_30;
+  const cumWater_bbl = Q_lost_bpd * years_30;
+  const cumWater_ML  = cumWater_m3 / 1e6;
+
+  const waterPerMWhe_m3  = E_diff > 0 ? (cumWater_m3  / (E_diff * 1000)) : 0;
+  const waterPerMWhe_bbl = E_diff > 0 ? (cumWater_bbl / (E_diff * 1000)) : 0;
+
+  // Top metrics
+  document.getElementById('wl-metrics-top').innerHTML = [
+    { l:'Loss fraction',       v:(lossFrac*100).toFixed(1), u:'%' },
+    { l:'Water lost/day',      v:Q_lost_bpd.toLocaleString(undefined,{maximumFractionDigits:0}), u:'bbl/d' },
+    { l:'Energy without loss', v:E_base.toFixed(0), u:'GWhe' },
+    { l:'Energy with loss',    v:E_loss.toFixed(0), u:'GWhe' },
+  ].map(m=>'<div class="mc"><div class="ml">'+m.l+'</div><div class="mv" style="font-size:16px">'+m.v+'</div><div class="mu">'+m.u+'</div></div>').join('');
+
+  // Flow table
+  const rows = [
+    { label:'Injection rate',     bpd:qtot,      m3d:qtot*BBL_TO_M3,      ls:qtot*BBL_TO_M3*1000/86400,      gpm:qtot*0.02917 },
+    { label:'Effective produced', bpd:qtot_eff,  m3d:qtot_eff*BBL_TO_M3,  ls:qtot_eff*BBL_TO_M3*1000/86400,  gpm:qtot_eff*0.02917 },
+    { label:'Lost to formation',  bpd:Q_lost_bpd,m3d:Q_lost_m3d,          ls:Q_lost_ls,                       gpm:Q_lost_gpm },
+  ];
+  document.getElementById('wl-flow-table').innerHTML = rows.map(r =>
+    '<div style="background:var(--bg2);border-radius:var(--r);padding:10px 12px">' +
+    '<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">'+r.label+'</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px">' +
+    '<span style="color:var(--text2)">bbl/d</span><span style="font-weight:600">'+r.bpd.toLocaleString(undefined,{maximumFractionDigits:0})+'</span>' +
+    '<span style="color:var(--text2)">m³/d</span><span style="font-weight:600">'+r.m3d.toFixed(1)+'</span>' +
+    '<span style="color:var(--text2)">l/s</span><span style="font-weight:600">'+r.ls.toFixed(2)+'</span>' +
+    '<span style="color:var(--text2)">gal/min</span><span style="font-weight:600">'+r.gpm.toFixed(1)+'</span>' +
+    '</div></div>'
+  ).join('') +
+    '<div style="background:var(--bg2);border-radius:var(--r);padding:10px 12px">' +
+    '<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Energy Impact</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px">' +
+    '<span style="color:var(--text2)">ΔE (GWhe)</span><span style="font-weight:600;color:#c0392b">-'+E_diff.toFixed(1)+'</span>' +
+    '<span style="color:var(--text2)">ΔE (%)</span><span style="font-weight:600;color:#c0392b">-'+E_pct.toFixed(1)+'%</span>' +
+    '<span style="color:var(--text2)">m³/MWhe</span><span style="font-weight:600">'+waterPerMWhe_m3.toFixed(2)+'</span>' +
+    '<span style="color:var(--text2)">bbl/MWhe</span><span style="font-weight:600">'+waterPerMWhe_bbl.toFixed(2)+'</span>' +
+    '</div></div>';
+
+  // Power chart
+  if(chartWlPower) chartWlPower.destroy();
+  chartWlPower = new Chart(document.getElementById('chart-wl-power'), {
+    type:'line',
+    data:{ datasets:[
+      { label:'No-loss reference',
+        data:HORIZONS.map(function(yr,i){return {x:yr,y:P_net_base[i]};}),
+        borderColor:CHART_COLORS.noLoss,borderWidth:2.5,pointRadius:4,fill:false,tension:0.3,borderDash:[5,3] },
+      { label:'Current configuration — '+(lossFrac*100).toFixed(1)+'% water loss',
+        data:HORIZONS.map(function(yr,i){return {x:yr,y:P_net_loss[i]};}),
+        borderColor:CHART_COLORS.waterLoss,borderWidth:2.5,pointRadius:4,fill:true,backgroundColor:CHART_COLORS.waterLossFill,tension:0.3 },
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{size:13},boxWidth:12}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+' MWe';}}}
       },
-      scales: {
-        x: { type:'linear', min:0, max:30,
-             title:{ display:true, text:'Production time (years)', font:{size:14} },
-             ticks:{ font:{size:13}, stepSize:5 } },
-        y: { min:-14, max:0,
-             title:{ display:true, text:'dT/dt (°C/yr)', font:{size:14} },
-             ticks:{ font:{size:13} } }
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{font:{size:13},stepSize:5}},
+        y:{title:{display:true,text:'Net Power (MW)',font:{size:14}},ticks:{font:{size:13}}}
       }
     }
   });
 
-  // ── Cumulative ΔT chart ───────────────────────────────────────────────────
-  if(chartCumdt) chartCumdt.destroy();
-  chartCumdt = new Chart(document.getElementById('chart-cumdt'), {
-    type: 'line',
-    data: {
-      datasets: [
-        { label: 'Current config ΔT (°C)',
-          data: HORIZONS.map((yr,i) => ({ x:yr, y: Math.min(0, toDisplay(T[i]) - toDisplay(T[0])) })),
-          borderColor: '#ff6600', borderWidth: 3, pointRadius: 5,
-          fill: true,
-          backgroundColor: 'rgba(255,102,0,0.08)',
-          tension: 0.3 },
+  // Bottom metrics
+  document.getElementById('wl-metrics-bot').innerHTML = [
+    { l:'Total water lost (30yr)', v:cumWater_ML.toFixed(2),              u:'million m³' },
+    { l:'Total water lost (30yr)', v:(cumWater_bbl/1e6).toFixed(2),       u:'million bbl' },
+    { l:'Water lost per MWhe',     v:waterPerMWhe_m3.toFixed(2),          u:'m³/MWhe' },
+    { l:'Water lost per MWhe',     v:waterPerMWhe_bbl.toFixed(2),         u:'bbl/MWhe' },
+  ].map(m=>'<div class="mc"><div class="ml">'+m.l+'</div><div class="mv" style="font-size:16px">'+m.v+'</div><div class="mu">'+m.u+'</div></div>').join('');
 
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'top', labels:{ font:{size:13}, boxWidth:12 } },
-        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} °C` } }
+  // Cumulative make-up water chart
+  if(chartWlWater) chartWlWater.destroy();
+  chartWlWater = new Chart(document.getElementById('chart-wl-water'), {
+    type:'line',
+    data:{ datasets:[
+      { label:'Make-up water (million m³)',
+        data:HORIZONS.map(function(yr){return {x:yr,y:Q_lost_m3d*yr*365.25/1e6};}),
+        borderColor:CHART_COLORS.waterM3,borderWidth:2.5,pointRadius:4,fill:true,backgroundColor:CHART_COLORS.waterM3Fill,tension:0.3,yAxisID:'y' },
+      { label:'Make-up water (million bbl)',
+        data:HORIZONS.map(function(yr){return {x:yr,y:Q_lost_bpd*yr*365.25/1e6};}),
+        borderColor:CHART_COLORS.waterBbl,borderWidth:2,pointRadius:3,fill:false,tension:0.3,borderDash:[4,3],yAxisID:'y2' },
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{size:13},boxWidth:12}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(3);}}}
       },
-      scales: {
-        x: { type:'linear', min:0, max:30,
-             title:{ display:true, text:'Production time (years)', font:{size:14} },
-             ticks:{ font:{size:13}, stepSize:5 } },
-        y: { title:{ display:true, text:'ΔT from year 0 (°C)', font:{size:14} },
-             ticks:{ font:{size:13} } }
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{font:{size:13},stepSize:5}},
+        y:{title:{display:true,text:'Cumulative make-up water (million m³)',font:{size:13}},ticks:{font:{size:12}}},
+        y2:{position:'right',title:{display:true,text:'Cumulative make-up water (million bbl)',font:{size:13}},ticks:{font:{size:12}},grid:{drawOnChartArea:false}}
       }
     }
   });
 }
 
+function renderWaterLossSection(qtot, wlFrac, P_net_with_loss, P_net_no_loss, orc, pred){
+  const section = document.getElementById('wl-section');
+  const chartSection = document.getElementById('wl-chart-section');
+  const chartGrid = document.getElementById('energy-content-grid');
+  if(!section || !chartSection) return;
+  if(wlFrac <= 0){
+    section.style.display = 'none';
+    chartSection.style.display = 'none';
+    if(chartGrid) chartGrid.classList.remove('has-water-loss');
+    requestAnimationFrame(() => { if(chartPowerPred) chartPowerPred.resize(); });
+    return;
+  }
+  section.style.display = '';
+  chartSection.style.display = '';
+  if(chartGrid) chartGrid.classList.add('has-water-loss');
+  requestAnimationFrame(() => { if(chartPowerPred) chartPowerPred.resize(); });
+
+  const Q_lost_bpd = qtot * wlFrac;
+  const Q_lost_m3d = Q_lost_bpd * BBL_TO_M3;
+  const Q_lost_ls  = Q_lost_m3d * 1000 / 86400;
+  const Q_lost_gpm = Q_lost_bpd * 0.02917;
+  const cumWater_m3  = Q_lost_m3d * 30 * 365.25;
+  const cumWater_bbl = Q_lost_bpd * 30 * 365.25;
+
+  const E_loss = trapz(P_net_with_loss.map(p=>p*1e6), H_SEC) / 3.6e12;
+  const E_full = trapz(P_net_no_loss.map(p=>p*1e6), H_SEC) / 3.6e12;
+  const E_diff = E_full - E_loss;
+  const waterPerMWhe_m3  = E_diff > 0 ? cumWater_m3  / (E_diff * 1000) : 0;
+  const waterPerMWhe_bbl = E_diff > 0 ? cumWater_bbl / (E_diff * 1000) : 0;
+
+  // Metrics
+  document.getElementById('wl-s-metrics').innerHTML = [
+    { l:'Energy without loss', v:E_full.toFixed(0), u:'GWhe', c:'var(--green)' },
+    { l:'Energy with loss',    v:E_loss.toFixed(0), u:'GWhe', c:'var(--green)' },
+    { l:'Energy reduction',    v:E_diff.toFixed(1), u:'GWhe', c:'var(--red)' },
+    { l:'Water lost/day',      v:Q_lost_bpd.toLocaleString(undefined,{maximumFractionDigits:0}), u:'bbl/d', c:'#185FA5' },
+    { l:'Water lost/day',      v:Q_lost_m3d.toFixed(1), u:'m³/d', c:'#185FA5' },
+    { l:'Water lost/day',      v:Q_lost_ls.toFixed(2),  u:'l/s', c:'#185FA5' },
+    { l:'Total lost (30yr)',   v:(cumWater_m3/1e6).toFixed(3), u:'million m³', c:'#185FA5' },
+    { l:'Lost per MWhe',       v:waterPerMWhe_m3.toFixed(2), u:'m³/MWhe', c:'#185FA5' },
+  ].map(m=>'<div class="mc"><div class="ml">'+m.l+'</div><div class="mv" style="font-size:15px;color:'+m.c+'">'+m.v+'</div><div class="mu">'+m.u+'</div></div>').join('');
+
+  // Flow table
+  const flowRows = [
+    { label:'Injection rate',     bpd:qtot,              m3d:qtot*BBL_TO_M3,             ls:qtot*BBL_TO_M3*1000/86400,             gpm:qtot*0.02917 },
+    { label:'Effective produced', bpd:qtot*(1-wlFrac),   m3d:qtot*(1-wlFrac)*BBL_TO_M3,  ls:qtot*(1-wlFrac)*BBL_TO_M3*1000/86400,  gpm:qtot*(1-wlFrac)*0.02917 },
+    { label:'Lost to formation',  bpd:Q_lost_bpd,        m3d:Q_lost_m3d,                  ls:Q_lost_ls,                              gpm:Q_lost_gpm },
+  ];
+  document.getElementById('wl-s-flow').innerHTML = flowRows.map(r=>
+    '<div style="background:var(--bg2);border-radius:var(--r);padding:10px 12px">'+
+    '<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">'+r.label+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px">'+
+    '<span style="color:var(--text2)">bbl/d</span><span style="font-weight:600">'+r.bpd.toLocaleString(undefined,{maximumFractionDigits:0})+'</span>'+
+    '<span style="color:var(--text2)">m³/d</span><span style="font-weight:600">'+r.m3d.toFixed(1)+'</span>'+
+    '<span style="color:var(--text2)">l/s</span><span style="font-weight:600">'+r.ls.toFixed(2)+'</span>'+
+    '<span style="color:var(--text2)">gal/min</span><span style="font-weight:600">'+r.gpm.toFixed(1)+'</span>'+
+    '</div></div>'
+  ).join('');
+
+  // Power chart
+  if(chartWlsP) chartWlsP.destroy();
+  chartWlsP = new Chart(document.getElementById('chart-wls-power'),{
+    type:'line',
+    data:{datasets:[
+      { label:'No-loss reference', data:HORIZONS.map(function(yr,i){return{x:yr,y:P_net_no_loss[i]};}),
+        borderColor:CHART_COLORS.noLoss,borderWidth:2.5,pointRadius:4,fill:false,tension:0.3,borderDash:[5,3] },
+      { label:'Current configuration — '+(wlFrac*100).toFixed(1)+'% water loss', data:HORIZONS.map(function(yr,i){return{x:yr,y:P_net_with_loss[i]};}),
+        borderColor:CHART_COLORS.waterLoss,borderWidth:2.5,pointRadius:4,fill:true,backgroundColor:CHART_COLORS.waterLossFill,tension:0.3 },
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{legend:{position:'top',labels:{font:{size:13},boxWidth:12}}},
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{font:{size:13},stepSize:5}},
+        y:{title:{display:true,text:'Net Power (MW)',font:{size:14}},ticks:{font:{size:13}}}
+      }}
+  });
+
+  // Water chart
+  if(chartWlsW) chartWlsW.destroy();
+  chartWlsW = new Chart(document.getElementById('chart-wls-water'),{
+    type:'line',
+    data:{datasets:[
+      { label:'Make-up water (million m³)', data:HORIZONS.map(function(yr){return{x:yr,y:Q_lost_m3d*yr*365.25/1e6};}),
+        borderColor:CHART_COLORS.waterM3,borderWidth:2.5,pointRadius:4,fill:true,backgroundColor:CHART_COLORS.waterM3Fill,tension:0.3,yAxisID:'y' },
+      { label:'Make-up water (million bbl)', data:HORIZONS.map(function(yr){return{x:yr,y:Q_lost_bpd*yr*365.25/1e6};}),
+        borderColor:CHART_COLORS.waterBbl,borderWidth:2,pointRadius:3,fill:false,tension:0.3,borderDash:[4,3],yAxisID:'y2' },
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{legend:{position:'top',labels:{font:{size:13},boxWidth:12}}},
+      scales:{
+        x:{type:'linear',min:0,max:30,title:{display:true,text:'Production time (years)',font:{size:14}},ticks:{font:{size:13},stepSize:5}},
+        y:{title:{display:true,text:'million m³',font:{size:13}},ticks:{font:{size:12}}},
+        y2:{position:'right',title:{display:true,text:'million bbl',font:{size:13}},ticks:{font:{size:12}},grid:{drawOnChartArea:false}}
+      }}
+  });
+
+  // Water lost per MWhe over time
+  // For each horizon: daily water lost / instantaneous net power at that horizon
+  // = how many m3 of water are lost per MWhe produced at that point in time
+  // As power declines over time, this ratio increases
+  const mwhPerYear = P_net_with_loss.map(p => p * 24 * 365.25); // MWh/yr at each horizon
+  const waterPerMwhe_ts_m3  = HORIZONS.map((yr, i) => ({
+    x: yr,
+    y: mwhPerYear[i] > 0 ? (Q_lost_m3d * 365.25) / mwhPerYear[i] : null
+  })).filter(p => p.y !== null);
+  const waterPerMwhe_ts_bbl = HORIZONS.map((yr, i) => ({
+    x: yr,
+    y: mwhPerYear[i] > 0 ? (Q_lost_bpd * 365.25) / mwhPerYear[i] : null
+  })).filter(p => p.y !== null);
+
+  if(chartWlsPerMWhe) chartWlsPerMWhe.destroy();
+  chartWlsPerMWhe = new Chart(document.getElementById('chart-wls-permwhe'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Water lost per MWhe (m³/MWhe)',
+        data: waterPerMwhe_ts_m3,
+        borderColor: CHART_COLORS.waterM3, borderWidth: 2.5, pointRadius: 5,
+        fill: true, backgroundColor: CHART_COLORS.waterM3Fill, tension: 0.3,
+        yAxisID: 'y' },
+      { label: 'Water lost per MWhe (bbl/MWhe)',
+        data: waterPerMwhe_ts_bbl,
+        borderColor: CHART_COLORS.waterBbl, borderWidth: 2, pointRadius: 4,
+        fill: false, tension: 0.3, borderDash: [4,3],
+        yAxisID: 'y2' },
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: {size:13}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(3) } }
+      },
+      scales: {
+        x: { type:'linear', min:0, max:30,
+             title: { display:true, text:'Production time (years)', font:{size:14} },
+             ticks: { font:{size:13}, stepSize:5 } },
+        y: { title: { display:true, text:'m³/MWhe', font:{size:14} },
+             ticks: { font:{size:13} } },
+        y2: { position:'right',
+              title: { display:true, text:'bbl/MWhe', font:{size:13} },
+              ticks: { font:{size:12} },
+              grid: { drawOnChartArea: false } }
+      }
+    }
+  });
+}
 
 // ── STARTUP ───────────────────────────────────────────────────────────────
 drawWellDiagram();
