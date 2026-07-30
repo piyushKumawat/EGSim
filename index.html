@@ -29,7 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pill-green{background:var(--green-bg);color:var(--green-t)}
 
 /* LAYOUT */
-.layout{display:grid;grid-template-columns:440px 1fr;height:calc(100vh - 46px);overflow:hidden}
+.layout{display:grid;grid-template-columns:572px minmax(0,1fr);height:calc(100vh - 46px);overflow:hidden}
 .side{background:var(--bg);border-right:.5px solid var(--border2);overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
 .main{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:none;width:100%;min-width:0;justify-self:stretch}
 
@@ -63,6 +63,8 @@ tbody tr.worst td{background:var(--red-bg);color:var(--red)}
 .srow label{font-size:14px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .srow input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;min-width:0}
 .srow .sv{font-size:14px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
+#well-config-panel .srow{grid-template-columns:190px 1fr 65px}
+#well-config-panel .srow label{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
 
 /* PREDICT BOX */
 .pout{background:var(--blue-bg);border-radius:var(--r);padding:10px;text-align:center;margin-top:6px}
@@ -347,15 +349,15 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
   </div>
 
   <!-- Sliders -->
-  <div class="panel">
+  <div class="panel" id="well-config-panel">
     <div class="ptitle">Well configuration</div>
     <div class="srow">
-      <label>Distance (ft)</label>
+      <label>Distance b/w Inj and Prod (ft)</label>
       <input type="range" id="sl-dist" min="300" max="600" step="1" value="450" oninput="sliderChanged()">
       <span class="sv" id="lbl-dist">450 ft</span>
     </div>
     <div class="srow">
-      <label>Angle (°)</label>
+      <label>Well configuration angle (°)</label>
       <input type="range" id="sl-angle" min="60" max="180" step="1" value="120" oninput="sliderChanged()">
       <span class="sv" id="lbl-angle">120°</span>
     </div>
@@ -451,8 +453,8 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           <select id="color-by" onchange="renderAllDecline()" style="margin-left:4px">
             <option value="spac">Fracture spacing</option>
             <option value="flow">Flow rate</option>
-            <option value="dist">Distance</option>
-            <option value="angle">Angle</option>
+            <option value="dist">Distance b/w Inj and Prod</option>
+            <option value="angle">Well configuration angle</option>
           </select>
         </label>
       </div>
@@ -637,8 +639,8 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
 
     <!-- Contour heatmap -->
     <div class="panel" style="margin-bottom:10px">
-      <div class="ptitle">Spacing × Distance interaction — net energy heatmap (GWhe)</div>
-      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Angle and flow held at mid-point. Color shows 30yr net electrical energy (GWhe). Reveals the coupled optimum.</div>
+      <div class="ptitle">Spacing × Distance b/w Inj and Prod interaction — net energy heatmap (GWhe)</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">Well configuration angle and flow held at mid-point. Color shows 30yr net electrical energy (GWhe). Reveals the coupled optimum.</div>
       <div class="cw" style="height:380px"><canvas id="chart-contour"></canvas></div>
       <div class="leg" id="leg-contour"></div>
     </div>
@@ -816,7 +818,7 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
         <table>
           <thead>
             <tr>
-              <th>Rank</th><th>#</th><th>Case</th><th>Dist</th><th>Angle</th>
+              <th>Rank</th><th>#</th><th>Case</th><th>Distance b/w Inj and Prod</th><th>Well configuration angle</th>
               <th>Spac</th><th>Q/frac</th><th>nF</th><th>Q_total (bbl/d)</th>
               <th>ṁ (kg/s)</th><th>Parasitic (MWe, fixed)</th>
               <th>P_net avg (MWe)</th>
@@ -841,8 +843,8 @@ select{padding:3px 6px;font-size:11px;border:.5px solid var(--border2);border-ra
           <select id="e-color-by" onchange="renderPowerCurves()" style="margin-left:4px">
             <option value="spac">Fracture spacing</option>
             <option value="flow">Flow rate</option>
-            <option value="dist">Distance</option>
-            <option value="angle">Angle</option>
+            <option value="dist">Distance b/w Inj and Prod</option>
+            <option value="angle">Well configuration angle</option>
           </select>
         </label>
       </div>
@@ -1061,7 +1063,7 @@ const E_GWH_BASE = {
 
 const R = {dist:{lo:300,mid:450,hi:600},angle:{lo:60,mid:120,hi:180},spac:{lo:30,mid:90,hi:150},flow:{lo:1100,mid:1350,hi:1600}};
 const FKEYS = ['dist','angle','spac','flow'];
-const FLAB  = ['Distance (ft)','Angle (°)','Spacing (ft)','Flow/frac (bbl/d)'];
+const FLAB  = ['Distance b/w Inj and Prod (ft)','Well configuration angle (°)','Spacing (ft)','Flow/frac (bbl/d)'];
 
 // Sobol sensitivity for 30yr net electrical energy (GWhe) — N=50,000 MC samples
 // Full chain: T_pred → P_gross → P_elec_gross → subtract fixed Par_MWe → integrate
@@ -1124,7 +1126,7 @@ const SOBOL_ST = {
  25: [0.4239,0.0081,0.5529,0.0233],
  30: [0.4037,0.0078,0.5648,0.0245],
 };
-const TERMS = ['Intercept','x₁ (Dist)','x₂ (Angle)','x₃ (Spacing)','x₄ (Flow)',
+const TERMS = ['Intercept','x₁ (Inj–Prod distance)','x₂ (Well configuration angle)','x₃ (Spacing)','x₄ (Flow)',
                'x₁²','x₂²','x₃²','x₄²',
                'x₁x₂','x₁x₃','x₁x₄','x₂x₃','x₂x₄','x₃x₄',
                'x₁x₃x₄','x₁²x₃','x₁x₃²'];
@@ -1390,7 +1392,7 @@ function drawWellDiagram(){
      <text x="10" y="14" font-size="9" fill="#aaa">Injector (red) · Producers (green)</text>
      ${inner}`;
   document.getElementById('cfg-label').innerHTML =
-    `Dist: <b>${dist} ft</b> · Angle: <b>${angle}°</b><br>Spacing: <b>${spac} ft</b> (~${nFracs} fracs) · Flow: <b>${flow} bbl/d</b>`;
+    `Distance b/w Inj and Prod: <b>${dist} ft</b> · Well configuration angle: <b>${angle}°</b><br>Spacing: <b>${spac} ft</b> (~${nFracs} fracs) · Flow: <b>${flow} bbl/d</b>`;
 }
 
 // ============================================================
@@ -1567,7 +1569,7 @@ function renderPredCurve(){
   }).join('');
 
   document.getElementById('pred-note').innerHTML =
-    `Prediction for: Dist <b>${run.dist} ft</b>, Angle <b>${run.angle}°</b>, Spacing <b>${run.spac} ft</b>, Flow <b>${run.flow} bbl/d</b>.
+    `Prediction for: Distance b/w Inj and Prod <b>${run.dist} ft</b>, Well configuration angle <b>${run.angle}°</b>, Spacing <b>${run.spac} ft</b>, Flow <b>${run.flow} bbl/d</b>.
      Dashed lines = 3 nearest numerically simulated scenarios.`;
 
   document.getElementById('leg-pred').innerHTML = '';
@@ -1647,7 +1649,7 @@ function renderEnergySobol(){
   const maxS = Math.max(...activeData);
 
   // Labels: swap flow label depending on mode
-  const labels = ['Distance (ft)', 'Angle (°)', 'Spacing (ft)',
+  const labels = ['Distance b/w Inj and Prod (ft)', 'Well configuration angle (°)', 'Spacing (ft)',
                   isTotalFlow ? 'Total flow (bbl/d)' : 'Flow/frac (bbl/d)'];
 
   document.getElementById('energy-sobol-bars').innerHTML = labels.map((lab,i) => {
@@ -1817,7 +1819,7 @@ function renderRSM(){
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => `${FLAB[xi].split(' ')[0]}: ${ctx.parsed.x.toFixed(0)}, ${FLAB[yi].split(' ')[0]}: ${ctx.parsed.y.toFixed(0)} → ${(ctx.raw._z||0).toFixed(0)} GWhe`
+            label: ctx => `${FLAB[xi]}: ${ctx.parsed.x.toFixed(0)}, ${FLAB[yi]}: ${ctx.parsed.y.toFixed(0)} → ${(ctx.raw._z||0).toFixed(0)} GWhe`
           }
         }
       },
@@ -2238,9 +2240,9 @@ function renderPowerCurves(){
 function renderTornado(){
   const params = [
     {key:'spac',  label:'Spacing (ft)',       col:'#27ae60'},
-    {key:'dist',  label:'Distance (ft)',       col:'#185FA5'},
+    {key:'dist',  label:'Distance b/w Inj and Prod (ft)', col:'#185FA5'},
     {key:'flow',  label:'Flow/frac (bbl/d)',  col:'#f39c12'},
-    {key:'angle', label:'Angle (°)',           col:'#c0392b'},
+    {key:'angle', label:'Well configuration angle (°)', col:'#c0392b'},
   ];
   // Two datasets: low and high value, colored green(+) or red(-)
   const datasets = [
@@ -2331,7 +2333,7 @@ function renderContour(){
   document.getElementById('leg-contour').innerHTML =
     `<div style="display:flex;align-items:center;gap:4px"><div style="width:14px;height:14px;border-radius:3px;background:rgba(41,128,185,.85)"></div>Low: ${Emin.toFixed(0)} GWhe</div>
      <div style="display:flex;align-items:center;gap:4px"><div style="width:14px;height:14px;border-radius:3px;background:rgba(192,57,43,.85)"></div>High: ${Emax.toFixed(0)} GWhe</div>
-     <span style="font-size:10px;color:var(--text3)">Angle & flow at mid-point · optimal region: top-left (large dist, small spac)</span>`;
+     <span style="font-size:10px;color:var(--text3)">Well configuration angle & flow at mid-point · optimal region: top-left (large Inj–Prod distance, small spacing)</span>`;
 }
 
 // ── MONTE CARLO HISTOGRAM ──────────────────────────────────────────────────
